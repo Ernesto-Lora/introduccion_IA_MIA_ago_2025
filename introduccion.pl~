@@ -1,0 +1,4 @@
+padre(juan,maria).
+    padre(juan,pedro).
+    
+    
