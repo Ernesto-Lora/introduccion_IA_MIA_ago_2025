@@ -1,0 +1,3 @@
+The file queens8_all.json generates all posible solution for the chess queens problem.
+With the one_solution 
+findall(Cols, solve_n_queens(Cols, N), AllCols)
