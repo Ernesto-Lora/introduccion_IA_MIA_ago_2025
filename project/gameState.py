@@ -1,4 +1,37 @@
 
+import pygame
+import sys
+import random
+from collections import namedtuple
+
+# ---- Config / UI constants ----
+WIDTH, HEIGHT = 900, 520
+BOARD_X = 40
+BOARD_Y = 40
+POINT_W = 36
+POINT_H = 160
+GAP = 8
+FPS = 30
+
+# Colors (user-specified)
+BG = (8, 80, 44)              # deep green felt
+WOOD = (60, 30, 12)           # dark brown wood outer frame
+TRI_A = (145, 182, 216)       # light blue
+TRI_B = (255, 140, 0)         # bright orange
+IVORY = (248, 244, 227)       # ivory (player)
+BLACK = (25, 25, 25)          # black (AI)
+HIGHLIGHT = (180, 50, 50)     # selection circle
+LEGAL_MARKER = (30, 200, 90)  # legal destination marker
+TEXT_COLOR = (255, 255, 55)   # general on-board text color
+STRIKE_COLOR = (0, 0, 0)      # stroke color for numbers (black)
+
+# Game constants
+NUM_POINTS = 24
+PLAYER = 1
+AI = -1
+Move = namedtuple("Move", ["from_pt", "to_pt", "die_used"])
+# to_pt == NUM_POINTS => player bear-off; to_pt == -1 => ai bear-off
+
 # ---- Game state and move generation ----
 class GameState:
     def __init__(self):

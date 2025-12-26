@@ -56,278 +56,8 @@ AI = -1
 Move = namedtuple("Move", ["from_pt", "to_pt", "die_used"])
 # to_pt == NUM_POINTS => player bear-off; to_pt == -1 => ai bear-off
 
-# ---- Game state and move generation ----
-class GameState:
-    def __init__(self):
-        self.points = [0] * 24 
-        self.bar = {PLAYER: 0, AI: 0}
-        self.bear_off = {PLAYER: 0, AI: 0}
-        self.current_player = PLAYER
-        self.dice = ()       # <--- Atributo restaurado para la UI
-        self.dice_left = []
-
-    def clone(self):
-        s = GameState()
-        s.points = self.points[:]
-        s.bar = self.bar.copy()
-        s.bear_off = self.bear_off.copy()
-        s.current_player = self.current_player
-        s.dice = self.dice   # <--- Atributo restaurado
-        s.dice_left = self.dice_left[:]
-        return s
-
-    def setup_standard(self):
-        """Configuración inicial estándar de Backgammon."""
-        self.points = [0] * 24
-        # Jugador (Positivos: se mueven de 0 a 23)
-        self.points[0]  = 2
-        self.points[11] = 5
-        self.points[16] = 3
-        self.points[18] = 5
-        # AI (Negativos: se mueven de 23 a 0)
-        self.points[23] = -2
-        self.points[12] = -5
-        self.points[7]  = -3
-        self.points[5]  = -5
-        
-        self.bar = {PLAYER: 0, AI: 0}
-        self.bear_off = {PLAYER: 0, AI: 0}
-        self.dice = ()
-        self.dice_left = []
-
-    def pip_count(self, player):
-        """Calcula la distancia total restante para un jugador."""
-        total = 0
-        if player == PLAYER:
-            # Distancia al punto 24 (fuera del tablero)
-            total += self.bar[PLAYER] * 25
-            for i, cnt in enumerate(self.points):
-                if cnt > 0: total += cnt * (24 - i)
-        else:
-            # Distancia al punto -1 (fuera del tablero)
-            total += self.bar[AI] * 25
-            for i, cnt in enumerate(self.points):
-                if cnt < 0: total += abs(cnt) * (i + 1)
-        return total
-
-    def can_bear_off(self, player):
-        """Verifica si todas las fichas están en el último cuadrante."""
-        if self.bar[player] > 0: return False
-        if player == PLAYER:
-            return sum(c for c in self.points[0:18] if c > 0) == 0
-        else:
-            return sum(abs(c) for c in self.points[6:24] if c < 0) == 0
-
-    def is_valid_dest(self, player, dest):
-        """Verifica si un punto está bloqueado (2+ fichas enemigas)."""
-        if not (0 <= dest <= 23): return True # Bear-off se maneja aparte
-        if player == PLAYER:
-            return self.points[dest] >= -1 # Puede mover si hay 0, 1 o más fichas propias/enemigas
-        else:
-            return self.points[dest] <= 1
-
-    def apply_move(self, move, player):
-        if move is None: return False
-        
-        # 1. Origen
-        if move.from_pt == "BAR":
-            self.bar[player] -= 1
-        else:
-            if player == PLAYER: self.points[move.from_pt] -= 1
-            else: self.points[move.from_pt] += 1
-
-        # 2. Destino (Bear-off o Tablero)
-        if (player == PLAYER and move.to_pt >= 24) or (player == AI and move.to_pt <= -1):
-            self.bear_off[player] += 1
-        else:
-            target_val = self.points[move.to_pt]
-            if player == PLAYER:
-                if target_val == -1: # HITTING!
-                    self.points[move.to_pt] = 1
-                    self.bar[AI] += 1
-                else:
-                    self.points[move.to_pt] += 1
-            else:
-                if target_val == 1: # HITTING!
-                    self.points[move.to_pt] = -1
-                    self.bar[PLAYER] += 1
-                else:
-                    self.points[move.to_pt] -= 1
-
-        if move.die_used in self.dice_left:
-            self.dice_left.remove(move.die_used)
-        return True
-
-    def legal_single_moves_for_die(self, player, die):
-        moves = []
-        # Regla de Oro: Si hay fichas en la barra, DEBEN salir primero
-        if self.bar[player] > 0:
-            dest = (die - 1) if player == PLAYER else (24 - die)
-            if self.is_valid_dest(player, dest):
-                moves.append(Move("BAR", dest, die))
-            return moves 
-
-        for i in range(24):
-            if (player == PLAYER and self.points[i] > 0) or (player == AI and self.points[i] < 0):
-                dest = i + die if player == PLAYER else i - die
-                if (player == PLAYER and dest >= 24) or (player == AI and dest <= -1):
-                    if self.can_bear_off(player):
-                        moves.append(Move(i, dest, die))
-                elif 0 <= dest <= 23:
-                    if self.is_valid_dest(player, dest):
-                        moves.append(Move(i, dest, die))
-        return moves
-
-    def generate_all_sequences_for_dice(self, player, dice_tuple):
-        """Genera todas las combinaciones de movimientos posibles para un turno."""
-        # Expandir dados si son dobles
-        dice_list = list(dice_tuple)
-        if len(dice_list) == 2 and dice_list[0] == dice_list[1]:
-            dice_list = [dice_list[0]] * 4
-
-        sequences = [[]]
-        states = [self.clone()]
-
-        for die in dice_list:
-            new_sequences = []
-            new_states = []
-            for seq, st in zip(sequences, states):
-                moves = st.legal_single_moves_for_die(player, die)
-                if not moves:
-                    new_sequences.append(seq)
-                    new_states.append(st)
-                else:
-                    for m in moves:
-                        ns = st.clone()
-                        ns.apply_move(m, player)
-                        new_sequences.append(seq + [m])
-                        new_states.append(ns)
-            sequences = new_sequences
-            states = new_states
-            if not any(len(s) > 0 for s in sequences): break
-
-        # Eliminar duplicados
-        unique = []
-        seen = set()
-        for seq in sequences:
-            key = tuple((m.from_pt, m.to_pt, m.die_used) for m in seq)
-            if key not in seen:
-                seen.add(key)
-                unique.append(seq)
-        return unique
-
-# ---- Heuristic evaluation ----
-def evaluate_state(state: GameState):
-    borne_diff = state.bear_off[PLAYER] - state.bear_off[AI]
-    pip_diff = state.pip_count(AI) - state.pip_count(PLAYER)
-    pieces_player = sum(x for x in state.points if x > 0)
-    pieces_ai = sum(-x for x in state.points if x < 0)
-    score = 30.0 * borne_diff + 0.05 * pip_diff + 0.2 * (pieces_player - pieces_ai)
-    return float(score)
-
-# ---- Unordered dice combos (21) with weights ----
-def unordered_dice_outcomes_with_weights():
-    combos = []
-    for d1 in range(1, 7):
-        for d2 in range(d1, 7):
-            weight = 1 if d1 == d2 else 2
-            combos.append(((d1, d2), weight))
-    return combos
-
-# ---- Expectiminimax (one decision ply) ----
-def expectiminimax_one_ply_with_cutoff(state: GameState, top_k_ai=14, top_k_opp=10, verbose=False):
-    assert state.dice, "AI dice must be set before calling expectiminimax."
-    ai_sequences = state.generate_all_sequences_for_dice(AI, tuple(state.dice))
-    if not ai_sequences:
-        if verbose:
-            print("AI: no legal sequences for rolled dice.")
-        return []
-
-    scored = []
-    for seq in ai_sequences:
-        st = state.clone()
-        for m in seq:
-            st.apply_move(m, AI)
-        v = evaluate_state(st)
-        scored.append((v, seq, st))
-    scored.sort(key=lambda x: x[0])
-    candidates = scored[:top_k_ai]
-    if verbose:
-        print(f"AI generated {len(ai_sequences)} sequences, keeping top {len(candidates)} candidates")
-
-    opp_outcomes = unordered_dice_outcomes_with_weights()
-    total_weight = sum(w for _, w in opp_outcomes)
-
-    eval_cache = {}
-    def eval_cached(st):
-        key = (tuple(st.points), st.bear_off[PLAYER], st.bear_off[AI])
-        if key in eval_cache:
-            return eval_cache[key]
-        val = evaluate_state(st)
-        eval_cache[key] = val
-        return val
-
-    BMIN = -1_000_000.0
-    best_seq = None
-    best_expected = float("inf")
-
-    for idx, (base_val, seq, st_after_ai) in enumerate(candidates):
-        if verbose:
-            print(f"\nCandidate {idx+1}: immediate eval {base_val:.3f} (seq len {len(seq)})")
-        if st_after_ai.bear_off[AI] >= 15:
-            if verbose:
-                print(" Immediate AI win detected for this candidate; selecting it.")
-            return seq
-
-        partial_sum = 0.0
-        processed_w = 0
-        pruned = False
-
-        for outcome, weight in opp_outcomes:
-            opp_seqs = st_after_ai.generate_all_sequences_for_dice(PLAYER, outcome)
-            if not opp_seqs:
-                opp_best_val = eval_cached(st_after_ai)
-            else:
-                scored_opp = []
-                for oseq in opp_seqs:
-                    st2 = st_after_ai.clone()
-                    for m in oseq:
-                        st2.apply_move(m, PLAYER)
-                    v2 = eval_cached(st2)
-                    scored_opp.append((v2, oseq))
-                scored_opp.sort(key=lambda x: x[0], reverse=True)
-                opp_best_val = scored_opp[0][0]
-            partial_sum += weight * opp_best_val
-            processed_w += weight
-            remaining_w = total_weight - processed_w
-
-            optimistic_total = partial_sum + remaining_w * BMIN
-            optimistic_expected = optimistic_total / total_weight
-
-            if verbose:
-                print(f"  outcome {outcome} w={weight} -> opp_best={opp_best_val:.3f}, partial_sum={partial_sum:.3f}, optimistic_expected={optimistic_expected:.3f}, best_so_far={best_expected:.3f}")
-
-            if optimistic_expected >= best_expected:
-                pruned = True
-                if verbose:
-                    print("  -> Candidate pruned by optimistic bound (cutoff).")
-                break
-
-        if not pruned:
-            expected_val = partial_sum / total_weight
-            if verbose:
-                print(f" Candidate final expected value = {expected_val:.3f}")
-            if expected_val < best_expected:
-                best_expected = expected_val
-                best_seq = seq
-                if verbose:
-                    print(f"  -> New best candidate (expected {best_expected:.3f})")
-
-    if best_seq is None:
-        if verbose:
-            print("All candidates pruned; falling back to first immediate-best candidate.")
-        return candidates[0][1]
-    return best_seq
+from gameState import GameState
+from expectiminimax import expectiminimax_one_ply_with_cutoff
 
 # ---- Pygame UI ----
 class BackgammonUI:
@@ -604,13 +334,29 @@ class BackgammonUI:
         self.info = f"You rolled {self.state.dice}"
         print(f"[ROLL] You rolled {self.state.dice}. dice_left={self.state.dice_left}")
 
-        # If there are no legal sequences for the player with these dice, skip turn.
-        if not self.state.generate_all_sequences_for_dice(PLAYER, tuple(self.state.dice_left)):
+        # --- FIX STARTS HERE ---
+        possible_sequences = self.state.generate_all_sequences_for_dice(PLAYER, tuple(self.state.dice_left))
+        
+        # Check if ANY sequence has a length > 0. 
+        # If the only result is [], it means no moves are possible.
+        has_legal_moves = any(len(seq) > 0 for seq in possible_sequences)
+
+        if not has_legal_moves:
             self.info = "No legal moves; turn skipped."
             print("[TURN] No legal moves for player; skipping turn.")
-            pygame.time.delay(120)
+            pygame.display.flip() # Force render so user sees the text
+            pygame.time.delay(1500) # Give user time to read
             self.end_player_turn()
             return
+
+
+        # # If there are no legal sequences for the player with these dice, skip turn.
+        # if not self.state.generate_all_sequences_for_dice(PLAYER, tuple(self.state.dice_left)):
+        #     self.info = "No legal moves; turn skipped."
+        #     print("[TURN] No legal moves for player; skipping turn.")
+        #     pygame.time.delay(120)
+        #     self.end_player_turn()
+        #     return
 
     def on_click(self, pos):
         mx, my = pos
@@ -795,6 +541,8 @@ class BackgammonUI:
         else:
             print("[INFO] AI has no legal moves. Skipping turn.")
             self.info = "AI has no legal moves."
+            pygame.display.flip() # Update screen to show the message
+            pygame.time.delay(1000) # Give the user time to read it
 
         # Finalizar turno y devolver control al jugador
         self.state.dice = ()
