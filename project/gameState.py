@@ -155,39 +155,66 @@ class GameState:
         return moves
 
     def generate_all_sequences_for_dice(self, player, dice_tuple):
-        """Genera todas las combinaciones de movimientos posibles para un turno."""
-        # Expandir dados si son dobles
-        dice_list = list(dice_tuple)
-        if len(dice_list) == 2 and dice_list[0] == dice_list[1]:
-            dice_list = [dice_list[0]] * 4
+        """
+        Generates all possible move sequences, trying both dice orders [A, B] and [B, A].
+        """
+        from itertools import permutations
 
-        sequences = [[]]
-        states = [self.clone()]
+        # 1. Handle Doubles (e.g., 2, 2 -> four 2s)
+        if len(dice_tuple) == 2 and dice_tuple[0] == dice_tuple[1]:
+            dice_lists = [[dice_tuple[0]] * 4]
+        else:
+            # 2. Handle standard dice: Try [2, 4] AND [4, 2]
+            # This ensures if 2 is blocked but 4 is open, we find the move.
+            dice_lists = list(set(permutations(dice_tuple)))
 
-        for die in dice_list:
-            new_sequences = []
-            new_states = []
-            for seq, st in zip(sequences, states):
-                moves = st.legal_single_moves_for_die(player, die)
-                if not moves:
-                    new_sequences.append(seq)
-                    new_states.append(st)
-                else:
-                    for m in moves:
-                        ns = st.clone()
-                        ns.apply_move(m, player)
-                        new_sequences.append(seq + [m])
-                        new_states.append(ns)
-            sequences = new_sequences
-            states = new_states
-            if not any(len(s) > 0 for s in sequences): break
+        all_final_sequences = []
 
-        # Eliminar duplicados
+        for d_list in dice_lists:
+            sequences = [[]]
+            states = [self.clone()]
+            
+            for die in d_list:
+                new_sequences = []
+                new_states = []
+                for seq, st in zip(sequences, states):
+                    moves = st.legal_single_moves_for_die(player, die)
+                    
+                    if not moves:
+                        # If blocked, keep the current partial sequence
+                        new_sequences.append(seq)
+                        new_states.append(st)
+                    else:
+                        # If moves exist, branch out
+                        for m in moves:
+                            ns = st.clone()
+                            ns.apply_move(m, player)
+                            new_sequences.append(seq + [m])
+                            new_states.append(ns)
+                
+                sequences = new_sequences
+                states = new_states
+                # REMOVED the "break" line here to allow subsequent dice to be tested
+            
+            all_final_sequences.extend(sequences)
+
+        # 3. Filter duplicates and find the best moves
+        # Backgammon Rule: You must use as many dice as possible.
+        # So we filter for the longest sequences found.
+        if not all_final_sequences:
+            return []
+            
+        max_len = max(len(s) for s in all_final_sequences)
+        
+        # Only keep unique sequences of the maximum length found
         unique = []
         seen = set()
-        for seq in sequences:
-            key = tuple((m.from_pt, m.to_pt, m.die_used) for m in seq)
-            if key not in seen:
-                seen.add(key)
-                unique.append(seq)
+        for seq in all_final_sequences:
+            # Only keep max length (Standard Backgammon Rule)
+            if len(seq) == max_len: 
+                key = tuple((m.from_pt, m.to_pt, m.die_used) for m in seq)
+                if key not in seen:
+                    seen.add(key)
+                    unique.append(seq)
+                    
         return unique

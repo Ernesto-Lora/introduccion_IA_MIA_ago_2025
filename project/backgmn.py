@@ -57,7 +57,7 @@ Move = namedtuple("Move", ["from_pt", "to_pt", "die_used"])
 # to_pt == NUM_POINTS => player bear-off; to_pt == -1 => ai bear-off
 
 from gameState import GameState
-from expectiminimax import expectiminimax_one_ply_with_cutoff
+from csp_arc_consistency import expectiminimax_one_ply_with_cutoff
 
 # ---- Pygame UI ----
 class BackgammonUI:
@@ -422,11 +422,20 @@ class BackgammonUI:
                     
                     if not self.state.dice_left:
                         self.end_player_turn()
-                    elif not self.state.generate_all_sequences_for_dice(PLAYER, tuple(self.state.dice_left)):
-                        self.info = "No legal moves left; turn skipped."
-                        self.end_player_turn()
                     else:
-                        self.info = f"Moved. Dice left: {self.state.dice_left}"
+                        # --- FIX STARTS HERE ---
+                        possibilities = self.state.generate_all_sequences_for_dice(PLAYER, tuple(self.state.dice_left))
+                        has_legal_moves = any(len(seq) > 0 for seq in possibilities)
+                        
+                        if not has_legal_moves:
+                            self.info = "No legal moves left; turn skipped."
+                            pygame.display.flip()
+                            pygame.time.delay(1000)
+                            self.end_player_turn()
+                        else:
+                            self.info = f"Moved. Dice left: {self.state.dice_left}"
+                        # --- FIX ENDS HERE ---
+
                 return
 
         # 5. CAMBIO DE SELECCIÓN (Si el destino no es válido pero es otra ficha propia)

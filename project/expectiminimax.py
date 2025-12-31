@@ -3,6 +3,7 @@ import pygame
 import sys
 import random
 from collections import namedtuple
+from csp_arc_consistency import BackgammonCSP
 
 # ---- Config / UI constants ----
 WIDTH, HEIGHT = 900, 520
@@ -90,11 +91,11 @@ def expectiminimax_one_ply_with_cutoff(state: GameState, top_k_ai=14, top_k_opp=
     best_expected = float("inf")
 
     for idx, (base_val, seq, st_after_ai) in enumerate(candidates):
-        if verbose:
-            print(f"\nCandidate {idx+1}: immediate eval {base_val:.3f} (seq len {len(seq)})")
+        # if verbose:
+        #     print(f"\nCandidate {idx+1}: immediate eval {base_val:.3f} (seq len {len(seq)})")
         if st_after_ai.bear_off[AI] >= 15:
-            if verbose:
-                print(" Immediate AI win detected for this candidate; selecting it.")
+            # if verbose:
+            #     print(" Immediate AI win detected for this candidate; selecting it.")
             return seq
 
         partial_sum = 0.0
@@ -122,27 +123,27 @@ def expectiminimax_one_ply_with_cutoff(state: GameState, top_k_ai=14, top_k_opp=
             optimistic_total = partial_sum + remaining_w * BMIN
             optimistic_expected = optimistic_total / total_weight
 
-            if verbose:
-                print(f"  outcome {outcome} w={weight} -> opp_best={opp_best_val:.3f}, partial_sum={partial_sum:.3f}, optimistic_expected={optimistic_expected:.3f}, best_so_far={best_expected:.3f}")
+            # if verbose:
+            #     print(f"  outcome {outcome} w={weight} -> opp_best={opp_best_val:.3f}, partial_sum={partial_sum:.3f}, optimistic_expected={optimistic_expected:.3f}, best_so_far={best_expected:.3f}")
 
             if optimistic_expected >= best_expected:
                 pruned = True
-                if verbose:
-                    print("  -> Candidate pruned by optimistic bound (cutoff).")
+                # if verbose:
+                #     print("  -> Candidate pruned by optimistic bound (cutoff).")
                 break
 
         if not pruned:
             expected_val = partial_sum / total_weight
-            if verbose:
-                print(f" Candidate final expected value = {expected_val:.3f}")
+            # if verbose:
+            #     print(f" Candidate final expected value = {expected_val:.3f}")
             if expected_val < best_expected:
                 best_expected = expected_val
                 best_seq = seq
-                if verbose:
-                    print(f"  -> New best candidate (expected {best_expected:.3f})")
+                # if verbose:
+                #     print(f"  -> New best candidate (expected {best_expected:.3f})")
 
     if best_seq is None:
-        if verbose:
-            print("All candidates pruned; falling back to first immediate-best candidate.")
+        # if verbose:
+        #     print("All candidates pruned; falling back to first immediate-best candidate.")
         return candidates[0][1]
     return best_seq
