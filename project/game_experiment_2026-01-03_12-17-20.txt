@@ -1,0 +1,217 @@
+Experiment Date: 2026-01-03_12-17-20
+Player 1 (White/Pos): CSP Arc Consistency (AI 1)
+Player 2 (Black/Neg): Expectiminimax V2 (AI 2)
+--------------------------------------------------
+Turn 1: AI 1 (CSP) | Dice: (2, 1)
+    Time: 0.0490s
+    Moves: 0->1, 0->2
+
+Turn 2: AI 2 (Base) | Dice: (3, 5)
+    Time: 0.0775s
+    Moves: 7->2, 5->2
+
+Turn 3: AI 1 (CSP) | Dice: (1, 1, 1, 1)
+    Time: 0.0444s
+    Moves: BAR->0, 0->1, 16->17, 18->19
+
+Turn 4: AI 2 (Base) | Dice: (6, 4)
+    Time: 0.1536s
+    Moves: 23->19, 23->17
+
+Turn 5: AI 1 (CSP) | Dice: (3, 2)
+    Time: 0.0185s
+    Moves: BAR->1
+
+Turn 6: AI 2 (Base) | Dice: (3, 2)
+    Time: 0.0513s
+    Moves: 12->10, 5->2
+
+Turn 7: AI 1 (CSP) | Dice: (6, 4)
+    Time: 0.0585s
+    Moves: BAR->3, 16->22
+
+Turn 8: AI 2 (Base) | Dice: (5, 5, 5, 5)
+    Time: 0.4284s
+    Moves: 5->0, 5->0, 5->0, 17->12
+
+Turn 9: AI 1 (CSP) | Dice: (4, 5)
+    Time: 0.0467s
+    Moves: 1->5, 1->6
+
+Turn 10: AI 2 (Base) | Dice: (6, 1)
+    Time: 0.0734s
+    Moves: 12->6, 6->5
+
+Turn 11: AI 1 (CSP) | Dice: (5, 4)
+    Time: 0.0330s
+    Moves: BAR->3, BAR->4
+
+Turn 12: AI 2 (Base) | Dice: (1, 3)
+    Time: 0.0417s
+    Moves: 19->16, 5->4
+
+Turn 13: AI 1 (CSP) | Dice: (1, 5)
+    Time: 0.0039s
+    Moves: BAR->4
+
+Turn 14: AI 2 (Base) | Dice: (1, 6)
+    Time: 0.0206s
+    Moves: BAR->23, 10->4
+
+Turn 15: AI 1 (CSP) | Dice: (3, 3, 3, 3)
+    Time: 0.0161s
+    Moves: PASS (No legal moves or AI failed)
+
+Turn 16: AI 2 (Base) | Dice: (2, 2, 2, 2)
+    Time: 0.0295s
+    Moves: 2->0, 2->0, 4->2, 16->14
+
+Turn 17: AI 1 (CSP) | Dice: (3, 6)
+    Time: 0.0102s
+    Moves: BAR->5
+
+Turn 18: AI 2 (Base) | Dice: (4, 3)
+    Time: 0.0666s
+    Moves: 12->9, 9->5
+
+Turn 19: AI 1 (CSP) | Dice: (2, 2, 2, 2)
+    Time: 0.0438s
+    Moves: BAR->1, BAR->1, 1->3, 1->3
+
+Turn 20: AI 2 (Base) | Dice: (4, 3)
+    Time: 0.1525s
+    Moves: 5->2, 14->10
+
+Turn 21: AI 1 (CSP) | Dice: (4, 3)
+    Time: 0.0479s
+    Moves: 1->4, 11->15
+
+Turn 22: AI 2 (Base) | Dice: (4, 1)
+    Time: 0.3573s
+    Moves: 12->8, 23->22
+
+Turn 23: AI 1 (CSP) | Dice: (4, 1)
+    Time: 0.0750s
+    Moves: BAR->3, 15->16
+
+Turn 24: AI 2 (Base) | Dice: (3, 1)
+    Time: 0.1346s
+    Moves: 7->4, 8->7
+
+Turn 25: AI 1 (CSP) | Dice: (6, 3)
+    Time: 0.0633s
+    Moves: BAR->5, 3->6
+
+Turn 26: AI 2 (Base) | Dice: (4, 5)
+    Time: 0.1801s
+    Moves: 4->0, 10->5
+
+Turn 27: AI 1 (CSP) | Dice: (2, 3)
+    Time: 0.0313s
+    Moves: BAR->1, 11->14
+
+Turn 28: AI 2 (Base) | Dice: (2, 6)
+    Time: 0.0926s
+    Moves: 22->16, 16->14
+
+Turn 29: AI 1 (CSP) | Dice: (1, 5)
+    Time: 0.0080s
+    Moves: BAR->4
+
+Turn 30: AI 2 (Base) | Dice: (4, 4, 4, 4)
+    Time: 0.0069s
+    Moves: 5->1, 14->10, 10->6, 6->2
+
+Turn 31: AI 1 (CSP) | Dice: (3, 5)
+    Time: 0.0031s
+    Moves: BAR->4
+
+Turn 32: AI 2 (Base) | Dice: (1, 1, 1, 1)
+    Time: 0.0135s
+    Moves: 1->0, 2->1, 2->1, 7->6
+
+Turn 33: AI 1 (CSP) | Dice: (2, 5)
+    Time: 0.0037s
+    Moves: BAR->4
+
+Turn 34: AI 2 (Base) | Dice: (3, 1)
+    Time: 0.0352s
+    Moves: 12->9, 7->6
+
+Turn 35: AI 1 (CSP) | Dice: (5, 6)
+    Time: 0.0148s
+    Moves: BAR->5, 3->8
+
+Turn 36: AI 2 (Base) | Dice: (6, 1)
+    Time: 0.4124s
+    Moves: 9->8, 8->2
+
+Turn 37: AI 1 (CSP) | Dice: (4, 2)
+    Time: 0.0087s
+    Moves: BAR->3, 5->7
+
+Turn 38: AI 2 (Base) | Dice: (5, 3)
+    Time: 0.0959s
+    Moves: 6->1, 12->9
+
+Turn 39: AI 1 (CSP) | Dice: (1, 2)
+    Time: 0.0100s
+    Moves: 3->4, 3->5
+
+Turn 40: AI 2 (Base) | Dice: (6, 3)
+    Time: 0.1621s
+    Moves: 6->0, 9->6
+
+Turn 41: AI 1 (CSP) | Dice: (4, 6)
+    Time: 0.0103s
+    Moves: 3->7, 4->10
+
+Turn 42: AI 2 (Base) | Dice: (1, 6)
+    Time: 0.6726s
+    Moves: 6->5, 5->-1
+
+Turn 43: AI 1 (CSP) | Dice: (1, 5)
+    Time: 0.0171s
+    Moves: BAR->4, 3->4
+
+Turn 44: AI 2 (Base) | Dice: (3, 5)
+    Time: 0.6346s
+    Moves: 2->-3, 2->-1
+
+Turn 45: AI 1 (CSP) | Dice: (6, 2)
+    Time: 0.0138s
+    Moves: 4->10, 4->6
+
+Turn 46: AI 2 (Base) | Dice: (3, 3, 3, 3)
+    Time: 1.1649s
+    Moves: 1->-2, 1->-2, 1->-2, 2->-1
+
+Turn 47: AI 1 (CSP) | Dice: (3, 1)
+    Time: 0.0033s
+    Moves: 4->7, 4->5
+
+Turn 48: AI 2 (Base) | Dice: (2, 1)
+    Time: 0.2513s
+    Moves: 0->-1, 0->-2
+
+Turn 49: AI 1 (CSP) | Dice: (1, 2)
+    Time: 0.0036s
+    Moves: 4->5, 5->7
+
+Turn 50: AI 2 (Base) | Dice: (4, 4, 4, 4)
+    Time: 0.0802s
+    Moves: 0->-4, 0->-4, 0->-4, 0->-4
+
+Turn 51: AI 1 (CSP) | Dice: (5, 6)
+    Time: 0.0028s
+    Moves: 5->10, 6->12
+
+Turn 52: AI 2 (Base) | Dice: (3, 5)
+    Time: 0.0000s
+    Moves: 0->-5, 0->-3
+
+
+==============================
+FINAL RESULT: AI 2 (Base)
+Total Turns: 53
+==============================

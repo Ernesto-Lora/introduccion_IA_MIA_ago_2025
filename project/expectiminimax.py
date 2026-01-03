@@ -54,23 +54,34 @@ def unordered_dice_outcomes_with_weights():
     return combos
 
 # ---- Expectiminimax (one decision ply) ----
-def expectiminimax_one_ply_with_cutoff2(state: GameState, top_k_ai=14, top_k_opp=10, verbose=False):
+def expectiminimax_one_ply_with_cutoff2(state: GameState, player_id: int, top_k_ai=14, top_k_opp=10, verbose=False):
     assert state.dice, "AI dice must be set before calling expectiminimax."
-    ai_sequences = state.generate_all_sequences_for_dice(AI, tuple(state.dice))
+    
+    opponent_id = -player_id
+    
+    # 1. Generate Moves for Self
+    ai_sequences = state.generate_all_sequences_for_dice(player_id, tuple(state.dice))
     if not ai_sequences:
-        if verbose:
-            print("AI: no legal sequences for rolled dice.")
+        if verbose: print("AI: no legal sequences for rolled dice.")
         return []
 
+    # 2. Score Candidates (Depth 0)
     scored = []
     for seq in ai_sequences:
         st = state.clone()
         for m in seq:
-            st.apply_move(m, AI)
-        v = evaluate_state(st)
+            st.apply_move(m, player_id)
+        
+        raw_v = evaluate_state(st)
+        # Flip score if we are Player -1 so that "Higher is Better" always holds
+        v = raw_v if player_id == 1 else -raw_v
+        
         scored.append((v, seq, st))
-    scored.sort(key=lambda x: x[0])
+    
+    # Sort Highest Score First (Best moves for us)
+    scored.sort(key=lambda x: x[0], reverse=True)
     candidates = scored[:top_k_ai]
+    
     if verbose:
         print(f"AI generated {len(ai_sequences)} sequences, keeping top {len(candidates)} candidates")
 
@@ -79,31 +90,35 @@ def expectiminimax_one_ply_with_cutoff2(state: GameState, top_k_ai=14, top_k_opp
 
     eval_cache = {}
     def eval_cached(st):
-        key = (tuple(st.points), st.bear_off[PLAYER], st.bear_off[AI])
-        if key in eval_cache:
-            return eval_cache[key]
-        val = evaluate_state(st)
+        key = (tuple(st.points), st.bear_off[player_id], st.bear_off[opponent_id])
+        if key in eval_cache: return eval_cache[key]
+        
+        raw_v = evaluate_state(st)
+        # Store perspective-adjusted score
+        val = raw_v if player_id == 1 else -raw_v
         eval_cache[key] = val
         return val
 
-    BMIN = -1_000_000.0
+    # We want to MAXIMIZE our expected value. 
+    # Current best is -infinity.
     best_seq = None
-    best_expected = float("inf")
+    best_expected = -float("inf")
+    
+    # Alpha-Beta style bound? 
+    # In Expectiminimax with Star pruning, we usually track an Alpha bound.
+    # Here we stick to simple expectation maximization.
 
     for idx, (base_val, seq, st_after_ai) in enumerate(candidates):
-        # if verbose:
-        #     print(f"\nCandidate {idx+1}: immediate eval {base_val:.3f} (seq len {len(seq)})")
-        if st_after_ai.bear_off[AI] >= 15:
-            # if verbose:
-            #     print(" Immediate AI win detected for this candidate; selecting it.")
+        
+        # Immediate Win Check
+        if st_after_ai.bear_off[player_id] >= 15:
             return seq
 
         partial_sum = 0.0
-        processed_w = 0
-        pruned = False
-
+        
         for outcome, weight in opp_outcomes:
-            opp_seqs = st_after_ai.generate_all_sequences_for_dice(PLAYER, outcome)
+            opp_seqs = st_after_ai.generate_all_sequences_for_dice(opponent_id, outcome)
+            
             if not opp_seqs:
                 opp_best_val = eval_cached(st_after_ai)
             else:
@@ -111,39 +126,23 @@ def expectiminimax_one_ply_with_cutoff2(state: GameState, top_k_ai=14, top_k_opp
                 for oseq in opp_seqs:
                     st2 = st_after_ai.clone()
                     for m in oseq:
-                        st2.apply_move(m, PLAYER)
+                        st2.apply_move(m, opponent_id)
+                    
                     v2 = eval_cached(st2)
-                    scored_opp.append((v2, oseq))
-                scored_opp.sort(key=lambda x: x[0], reverse=True)
-                opp_best_val = scored_opp[0][0]
+                    scored_opp.append(v2)
+                
+                # Opponent minimizes OUR score
+                opp_best_val = min(scored_opp)
+                
             partial_sum += weight * opp_best_val
-            processed_w += weight
-            remaining_w = total_weight - processed_w
 
-            optimistic_total = partial_sum + remaining_w * BMIN
-            optimistic_expected = optimistic_total / total_weight
-
-            # if verbose:
-            #     print(f"  outcome {outcome} w={weight} -> opp_best={opp_best_val:.3f}, partial_sum={partial_sum:.3f}, optimistic_expected={optimistic_expected:.3f}, best_so_far={best_expected:.3f}")
-
-            if optimistic_expected >= best_expected:
-                pruned = True
-                # if verbose:
-                #     print("  -> Candidate pruned by optimistic bound (cutoff).")
-                break
-
-        if not pruned:
-            expected_val = partial_sum / total_weight
-            # if verbose:
-            #     print(f" Candidate final expected value = {expected_val:.3f}")
-            if expected_val < best_expected:
-                best_expected = expected_val
-                best_seq = seq
-                # if verbose:
-                #     print(f"  -> New best candidate (expected {best_expected:.3f})")
+        expected_val = partial_sum / total_weight
+        
+        if expected_val > best_expected:
+            best_expected = expected_val
+            best_seq = seq
 
     if best_seq is None:
-        # if verbose:
-        #     print("All candidates pruned; falling back to first immediate-best candidate.")
         return candidates[0][1]
+        
     return best_seq

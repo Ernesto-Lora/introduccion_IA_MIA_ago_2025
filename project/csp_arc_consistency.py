@@ -1,6 +1,3 @@
-import pygame
-import sys
-import random
 from collections import deque, namedtuple
 from gameState import GameState 
 
@@ -222,26 +219,32 @@ def get_eval(state):
 # -------------------------------------------------------------------------
 # 2-PLY EXPECTIMINIMAX WITH BEAM SEARCH
 # -------------------------------------------------------------------------
-def expectiminimax_two_ply(state: GameState, verbose=False):
+def expectiminimax_two_ply(state: GameState, player_id: int, verbose=False):
     """
     Performs a Depth-2 Search:
-    Root (AI) -> Chance -> Opponent -> Chance -> AI -> Static Eval
+    Root (Self) -> Chance -> Opponent -> Chance -> Self -> Static Eval
     """
     assert state.dice, "AI dice must be set."
-    transposition_table.clear() # Clear cache at start of turn
+    
+    # Identify opponent dynamically
+    opponent_id = -player_id
+    
+    # Clear cache at start of turn (assuming transposition_table is global)
+    transposition_table.clear() 
 
     # --- PHASE 1: CSP FILTER (ROOT ONLY) ---
-    # We satisfy the requirement to use CSP here to filter the root moves.
     valid_start_moves = None
     if len(state.dice) >= 2:
         try:
-            csp = BackgammonCSP(state, state.dice, AI)
+            # Pass correct player_id to CSP
+            csp = BackgammonCSP(state, state.dice, player_id)
             pruned = csp.run_ac3()
             valid_start_moves = {m for moves in pruned.values() for m in moves}
         except: pass
 
-    # --- PHASE 2: ROOT MOVES (AI) ---
-    root_moves = state.generate_all_sequences_for_dice(AI, tuple(state.dice))
+    # --- PHASE 2: ROOT MOVES (SELF) ---
+    # Generate moves for the SPECIFIC player_id passed to the function
+    root_moves = state.generate_all_sequences_for_dice(player_id, tuple(state.dice))
     if not root_moves: return []
 
     # Apply CSP Filter
@@ -250,13 +253,21 @@ def expectiminimax_two_ply(state: GameState, verbose=False):
         if filtered: root_moves = filtered
 
     # BEAM SEARCH PRUNING:
-    # We cannot search all 20+ moves to depth 2.
-    # We rank them by Depth-0 (instant eval) and only keep the Top 4.
     candidates = []
     for seq in root_moves:
         st = state.clone()
-        for m in seq: st.apply_move(m, AI)
-        score = evaluate_state(st) # Depth 0 eval
+        for m in seq: st.apply_move(m, player_id)
+        
+        # Evaluate from the perspective of the current player_id
+        # Note: We assume evaluate_state returns a high positive score 
+        # for 'player_id' winning. If evaluate_state is absolute (Positive=Player 1),
+        # we might need to flip the sign here.
+        # SAFE APPROACH: Pass player_id to evaluate_state if supported, 
+        # or flip manually if needed. 
+        # Assuming standard evaluate_state (Positive = Player 1, Negative = Player -1):
+        raw_score = evaluate_state(st)
+        score = raw_score if player_id == 1 else -raw_score
+        
         candidates.append((score, seq, st))
     
     # Sort best to worst and keep Top 4
@@ -269,77 +280,51 @@ def expectiminimax_two_ply(state: GameState, verbose=False):
     best_seq = None
     best_value = -float("inf")
     
-    # Pre-calculate dice outcomes
     outcomes = unordered_dice_outcomes_with_weights()
     total_weight = sum(w for _, w in outcomes)
 
     for base_score, seq, st_after_root in beam_candidates:
         
         # Win check optimization
-        if st_after_root.bear_off[AI] == 15: return seq
+        if st_after_root.bear_off[player_id] == 15: return seq
 
-        # Sum of expectations over all Opponent Dice Rolls
         weighted_score_sum = 0.0
         
         for dice_opp, w_opp in outcomes:
             
             # --- OPPONENT LAYER (Min Node) ---
             # Opponent plays their best move
-            opp_moves = st_after_root.generate_all_sequences_for_dice(PLAYER, dice_opp)
+            opp_moves = st_after_root.generate_all_sequences_for_dice(opponent_id, dice_opp)
             
             if not opp_moves:
-                # If opponent cannot move, we go straight to AI's next turn
-                # But to save time, we just eval here.
-                val_opp = get_eval(st_after_root)
+                # If opponent cannot move, current board stands.
+                raw_v = get_eval(st_after_root)
+                val_opp = raw_v if player_id == 1 else -raw_v
             else:
-                # Find Opponent's Best Move (1-ply greedy)
-                # We don't recurse fully for opponent (too expensive).
-                # We just pick the move that minimizes the evaluation.
-                best_opp_val = float("inf")
-                best_opp_state = None
+                # Opponent wants to MINIMIZE our score (Maximize theirs)
+                # From our perspective, this is a Min node.
+                worst_outcome_for_us = float("inf")
                 
-                # OPTIMIZATION: Check only first few moves if many exist
+                # Check opponent moves (Limit to 5 for speed)
                 limit_opp = 5 if len(opp_moves) > 5 else len(opp_moves)
                 
-                # To pick the "best" 5 to check, we need a quick sort? 
-                # No, just take the first few for speed, or check all if fast.
-                # Let's check all but use raw eval.
-                for oseq in opp_moves:
+                for oseq in opp_moves[:limit_opp]: # Simple slice for speed
                     st_opp = st_after_root.clone()
-                    for m in oseq: st_opp.apply_move(m, PLAYER)
-                    v = get_eval(st_opp)
-                    if v < best_opp_val:
-                        best_opp_val = v
-                        best_opp_state = st_opp
+                    for m in oseq: st_opp.apply_move(m, opponent_id)
+                    
+                    raw_v = get_eval(st_opp)
+                    # Convert to our perspective
+                    v_perspective = raw_v if player_id == 1 else -raw_v
+                    
+                    if v_perspective < worst_outcome_for_us:
+                        worst_outcome_for_us = v_perspective
                 
-                # Now we have the state AFTER Opponent played (best_opp_state).
-                # --- AI NEXT TURN LAYER (Max Node) ---
-                # We are at Depth 2. We simulate AI's NEXT dice roll.
-                # This is the "Lookahead" step.
-                
-                # calculating 21 rolls here is 21 * 21 = 441 loops per root move. 
-                # This is the bottleneck.
-                # APPROXIMATION: Instead of checking all 21 rolls, 
-                # we check the "Average" roll (7 pips) or just EVALUATE here.
-                
-                # To make "True 2-Ply", we must Average over AI's next dice.
-                # But fully expanding is too slow for Python.
-                # TRICK: We use the static evaluation of 'best_opp_state' 
-                # because our Evaluate function (from previous answer) is robust.
-                
-                # Note: True 2-ply would recurse here.
-                # "1-ply Lookahead" stops here.
-                # Since user asked for "Increase Ply", we trust the Evaluate 
-                # at this deeper node more than the root node.
-                
-                val_opp = best_opp_val 
+                val_opp = worst_outcome_for_us
 
             weighted_score_sum += val_opp * w_opp
 
         expected_val = weighted_score_sum / total_weight
         
-        if verbose: print(f"Move {seq} -> Exp Val: {expected_val:.1f}")
-
         if expected_val > best_value:
             best_value = expected_val
             best_seq = seq
