@@ -54,7 +54,7 @@ def unordered_dice_outcomes_with_weights():
     return combos
 
 # ---- Expectiminimax (one decision ply) ----
-def expectiminimax_one_ply_with_cutoff(state: GameState, top_k_ai=14, top_k_opp=10, verbose=False):
+def expectiminimax_one_ply_with_cutoff2(state: GameState, top_k_ai=14, top_k_opp=10, verbose=False):
     assert state.dice, "AI dice must be set before calling expectiminimax."
     ai_sequences = state.generate_all_sequences_for_dice(AI, tuple(state.dice))
     if not ai_sequences:

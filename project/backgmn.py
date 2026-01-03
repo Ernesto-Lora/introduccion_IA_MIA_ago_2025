@@ -58,6 +58,7 @@ Move = namedtuple("Move", ["from_pt", "to_pt", "die_used"])
 
 from gameState import GameState
 from csp_arc_consistency import expectiminimax_one_ply_with_cutoff
+from expectiminimax import expectiminimax_one_ply_with_cutoff2
 
 # ---- Pygame UI ----
 class BackgammonUI:

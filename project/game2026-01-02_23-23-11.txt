@@ -1,0 +1,858 @@
+Experiment Date: 2026-01-02_23-23-11
+AI 1 (Player 1): csp_arc_consistency
+AI 2 (Player -1): expectiminimax (v2)
+----------------------------------------
+Turn 1: AI 1 (Dice: (1, 5))
+    Time: 0.07102s
+    Moves: (7->2), (2->1)
+
+Turn 2: AI 2 (Dice: (5, 5))
+    Time: 0.33455s
+    Moves: (7->2), (7->2), (7->2), (7->2)
+
+Turn 3: AI 1 (Dice: (3, 5))
+    Time: 0.08635s
+    Moves: (12->7), (5->2)
+
+Turn 4: AI 2 (Dice: (2, 1))
+    Time: 0.61221s
+    Moves: (5->4), (4->2)
+
+Turn 5: AI 1 (Dice: (4, 4))
+    Time: 0.01701s
+    Moves: (5->1), (5->1), (23->19), (23->19)
+
+Turn 6: AI 2 (Dice: (2, 2))
+    Time: 0.93565s
+    Moves: (5->3), (5->3), (5->3), (5->3)
+
+Turn 7: AI 1 (Dice: (1, 6))
+    Time: 0.18445s
+    Moves: (12->6), (6->5)
+
+Turn 8: AI 2 (Dice: (5, 1))
+    Time: 0.06996s
+    Moves: (12->7), (3->2)
+
+Turn 9: AI 1 (Dice: (4, 5))
+    Time: 0.01145s
+    Moves: (12->8), (7->2)
+
+Turn 10: AI 2 (Dice: (6, 2))
+    Time: 0.08755s
+    Moves: (23->17), (17->15)
+
+Turn 11: AI 1 (Dice: (3, 3))
+    Time: 0.01677s
+    Moves: (7->4), (7->4), (23->20), (23->20)
+
+Turn 12: AI 2 (Dice: (3, 3))
+    Time: 0.20291s
+    Moves: (5->2), (5->2), (12->9), (12->9)
+
+Turn 13: AI 1 (Dice: (6, 5))
+    Time: 0.03884s
+    Moves: (7->2), (15->9)
+
+Turn 14: AI 2 (Dice: (6, 5))
+    Time: 0.20601s
+    Moves: (7->2), (9->3)
+
+Turn 15: AI 1 (Dice: (6, 1))
+    Time: 0.02271s
+    Moves: (15->9), (9->8)
+
+Turn 16: AI 2 (Dice: (2, 5))
+    Time: 0.22738s
+    Moves: (12->10), (15->10)
+
+Turn 17: AI 1 (Dice: (2, 2))
+    Time: 0.02413s
+    Moves: (7->5), (7->5), (23->21), (23->21)
+
+Turn 18: AI 2 (Dice: (3, 1))
+    Time: 0.28788s
+    Moves: (7->6), (6->3)
+
+Turn 19: AI 1 (Dice: (6, 3))
+    Time: 0.04766s
+    Moves: (12->6), (6->3)
+
+Turn 20: AI 2 (Dice: (6, 5))
+    Time: 0.23862s
+    Moves: (23->17), (17->12)
+
+Turn 21: AI 1 (Dice: (5, 2))
+    Time: 0.04717s
+    Moves: (12->10), (7->2)
+
+Turn 22: AI 2 (Dice: (2, 6))
+    Time: 0.21287s
+    Moves: (23->17), (12->10)
+
+Turn 23: AI 1 (Dice: (2, 4))
+    Time: 0.05365s
+    Moves: (17->15), (7->3)
+
+Turn 24: AI 2 (Dice: (1, 1))
+    Time: 0.32226s
+    Moves: (3->2), (3->2), (3->2), (15->14)
+
+Turn 25: AI 1 (Dice: (5, 3))
+    Time: 0.05239s
+    Moves: (14->9), (12->9)
+
+Turn 26: AI 2 (Dice: (2, 2))
+    Time: 0.39517s
+    Moves: (12->10), (12->10), (12->10), (12->10)
+
+Turn 27: AI 1 (Dice: (5, 6))
+    Time: 0.07211s
+    Moves: (7->2), (23->17)
+
+Turn 28: AI 2 (Dice: (6, 4))
+    Time: 0.33690s
+    Moves: (17->13), (13->7)
+
+Turn 29: AI 1 (Dice: (1, 3))
+    Time: 0.08583s
+    Moves: (14->13), (13->10)
+
+Turn 30: AI 2 (Dice: (6, 6))
+    Time: 0.24485s
+    Moves: (23->17), (23->17), (23->17), (23->17)
+
+Turn 31: AI 1 (Dice: (5, 3))
+    Time: 0.07576s
+    Moves: (7->2), (10->7)
+
+Turn 32: AI 2 (Dice: (5, 3))
+    Time: 0.20068s
+    Moves: (7->2), (10->7)
+
+Turn 33: AI 1 (Dice: (3, 3))
+    Time: 0.06543s
+    Moves: (10->7), (10->7), (10->7), (17->14)
+
+Turn 34: AI 2 (Dice: (2, 6))
+    Time: 0.24898s
+    Moves: (23->17), (12->10)
+
+Turn 35: AI 1 (Dice: (1, 2))
+    Time: 0.10651s
+    Moves: (17->15), (15->14)
+
+Turn 36: AI 2 (Dice: (1, 6))
+    Time: 0.28381s
+    Moves: (14->13), (13->7)
+
+Turn 37: AI 1 (Dice: (1, 1))
+    Time: 0.07644s
+    Moves: (7->6), (7->6), (7->6), (7->6)
+
+Turn 38: AI 2 (Dice: (4, 6))
+    Time: 0.14200s
+    Moves: (17->13), (13->7)
+
+Turn 39: AI 1 (Dice: (5, 1))
+    Time: 0.11548s
+    Moves: (23->22), (22->17)
+
+Turn 40: AI 2 (Dice: (6, 2))
+    Time: 0.12221s
+    Moves: (23->17), (17->15)
+
+Turn 41: AI 1 (Dice: (4, 6))
+    Time: 0.12074s
+    Moves: (17->13), (23->17)
+
+Turn 42: AI 2 (Dice: (1, 1))
+    Time: 0.02625s
+    Moves: (15->14), (14->13), (13->12), (23->22)
+
+Turn 43: AI 1 (Dice: (6, 4))
+    Time: 0.01485s
+    Moves: (17->13), (23->17)
+
+Turn 44: AI 2 (Dice: (1, 6))
+    Time: 0.00653s
+    Moves: (23->22), (23->17)
+
+Turn 45: AI 1 (Dice: (1, 5))
+    Time: 0.01649s
+    Moves: (7->2)
+
+Turn 46: AI 2 (Dice: (4, 1))
+    Time: 0.00464s
+    Moves: (17->13), (13->12)
+
+Turn 47: AI 1 (Dice: (6, 1))
+    Time: 0.00100s
+    Moves: NO LEGAL MOVES
+
+Turn 48: AI 2 (Dice: (3, 6))
+    Time: 0.00207s
+    Moves: (10->7)
+
+Turn 49: AI 1 (Dice: (3, 2))
+    Time: 0.00346s
+    Moves: (12->10), (10->7)
+
+Turn 50: AI 2 (Dice: (3, 4))
+    Time: 0.00710s
+    Moves: (17->14), (14->10)
+
+Turn 51: AI 1 (Dice: (5, 2))
+    Time: 0.00350s
+    Moves: (12->10), (7->2)
+
+Turn 52: AI 2 (Dice: (1, 4))
+    Time: 0.00172s
+    Moves: (7->3), (3->2)
+
+Turn 53: AI 1 (Dice: (1, 2))
+    Time: 0.00106s
+    Moves: (17->15), (15->14)
+
+Turn 54: AI 2 (Dice: (5, 1))
+    Time: 0.00374s
+    Moves: (7->2)
+
+Turn 55: AI 1 (Dice: (6, 1))
+    Time: 0.00105s
+    Moves: NO LEGAL MOVES
+
+Turn 56: AI 2 (Dice: (6, 4))
+    Time: 0.00095s
+    Moves: (17->13), (13->7)
+
+Turn 57: AI 1 (Dice: (5, 4))
+    Time: 0.00376s
+    Moves: (17->13), (7->2)
+
+Turn 58: AI 2 (Dice: (2, 6))
+    Time: 0.00195s
+    Moves: (12->10)
+
+Turn 59: AI 1 (Dice: (1, 4))
+    Time: 0.00168s
+    Moves: (17->13), (13->12)
+
+Turn 60: AI 2 (Dice: (3, 6))
+    Time: 0.00151s
+    Moves: (17->14)
+
+Turn 61: AI 1 (Dice: (6, 5))
+    Time: 0.00214s
+    Moves: (7->2)
+
+Turn 62: AI 2 (Dice: (4, 1))
+    Time: 0.00263s
+    Moves: (17->13), (13->12)
+
+Turn 63: AI 1 (Dice: (6, 4))
+    Time: 0.00064s
+    Moves: (17->13), (13->7)
+
+Turn 64: AI 2 (Dice: (2, 1))
+    Time: 0.00217s
+    Moves: (14->13), (12->10)
+
+Turn 65: AI 1 (Dice: (2, 1))
+    Time: 0.00193s
+    Moves: (13->12), (12->10)
+
+Turn 66: AI 2 (Dice: (2, 2))
+    Time: 0.00800s
+    Moves: (12->10), (12->10), (12->10), (12->10)
+
+Turn 67: AI 1 (Dice: (5, 6))
+    Time: 0.00205s
+    Moves: (7->2), (13->7)
+
+Turn 68: AI 2 (Dice: (6, 5))
+    Time: 0.00251s
+    Moves: (7->2), (13->7)
+
+Turn 69: AI 1 (Dice: (6, 5))
+    Time: 0.00199s
+    Moves: (7->2), (13->7)
+
+Turn 70: AI 2 (Dice: (6, 6))
+    Time: 0.00052s
+    Moves: (13->7), (13->7), (13->7)
+
+Turn 71: AI 1 (Dice: (6, 1))
+    Time: 0.00062s
+    Moves: NO LEGAL MOVES
+
+Turn 72: AI 2 (Dice: (1, 3))
+    Time: 0.00051s
+    Moves: (17->14), (14->13)
+
+Turn 73: AI 1 (Dice: (4, 6))
+    Time: 0.00183s
+    Moves: (17->13), (13->7)
+
+Turn 74: AI 2 (Dice: (2, 2))
+    Time: 0.00131s
+    Moves: (BAR->22), (17->15), (15->13), (17->15)
+
+Turn 75: AI 1 (Dice: (3, 2))
+    Time: 0.00203s
+    Moves: (15->13), (10->7)
+
+Turn 76: AI 2 (Dice: (4, 4))
+    Time: 0.00051s
+    Moves: NO LEGAL MOVES
+
+Turn 77: AI 1 (Dice: (2, 4))
+    Time: 0.00110s
+    Moves: (BAR->22), (17->13)
+
+Turn 78: AI 2 (Dice: (4, 1))
+    Time: 0.00050s
+    Moves: (BAR->23), (7->3)
+
+Turn 79: AI 1 (Dice: (2, 5))
+    Time: 0.00197s
+    Moves: (17->15), (7->2)
+
+Turn 80: AI 2 (Dice: (5, 5))
+    Time: 0.01142s
+    Moves: (7->2), (7->2), (7->2), (7->2)
+
+Turn 81: AI 1 (Dice: (6, 3))
+    Time: 0.00195s
+    Moves: (23->17), (10->7)
+
+Turn 82: AI 2 (Dice: (5, 4))
+    Time: 0.00294s
+    Moves: (7->3), (7->2)
+
+Turn 83: AI 1 (Dice: (1, 6))
+    Time: 0.00162s
+    Moves: (23->22), (23->17)
+
+Turn 84: AI 2 (Dice: (4, 1))
+    Time: 0.00265s
+    Moves: (7->3), (3->2)
+
+Turn 85: AI 1 (Dice: (1, 4))
+    Time: 0.00176s
+    Moves: (7->3), (23->22)
+
+Turn 86: AI 2 (Dice: (4, 3))
+    Time: 0.00051s
+    Moves: NO LEGAL MOVES
+
+Turn 87: AI 1 (Dice: (2, 6))
+    Time: 0.00059s
+    Moves: (BAR->22), (23->17)
+
+Turn 88: AI 2 (Dice: (5, 6))
+    Time: 0.00097s
+    Moves: NO LEGAL MOVES
+
+Turn 89: AI 1 (Dice: (6, 2))
+    Time: 0.00111s
+    Moves: NO LEGAL MOVES
+
+Turn 90: AI 2 (Dice: (2, 1))
+    Time: 0.00102s
+    Moves: (BAR->23), (17->15)
+
+Turn 91: AI 1 (Dice: (5, 2))
+    Time: 0.00335s
+    Moves: (17->15), (7->2)
+
+Turn 92: AI 2 (Dice: (5, 1))
+    Time: 0.00823s
+    Moves: (15->10), (3->2)
+
+Turn 93: AI 1 (Dice: (1, 6))
+    Time: 0.00106s
+    Moves: (23->17)
+
+Turn 94: AI 2 (Dice: (2, 4))
+    Time: 0.00168s
+    Moves: (17->15), (7->3)
+
+Turn 95: AI 1 (Dice: (2, 2))
+    Time: 0.00110s
+    Moves: NO LEGAL MOVES
+
+Turn 96: AI 2 (Dice: (2, 6))
+    Time: 0.00099s
+    Moves: (23->17), (17->15)
+
+Turn 97: AI 1 (Dice: (4, 3))
+    Time: 0.00294s
+    Moves: (10->7), (7->3)
+
+Turn 98: AI 2 (Dice: (2, 3))
+    Time: 0.00097s
+    Moves: NO LEGAL MOVES
+
+Turn 99: AI 1 (Dice: (3, 6))
+    Time: 0.00114s
+    Moves: NO LEGAL MOVES
+
+Turn 100: AI 2 (Dice: (4, 6))
+    Time: 0.00106s
+    Moves: NO LEGAL MOVES
+
+Turn 101: AI 1 (Dice: (6, 6))
+    Time: 0.00114s
+    Moves: NO LEGAL MOVES
+
+Turn 102: AI 2 (Dice: (6, 2))
+    Time: 0.00099s
+    Moves: NO LEGAL MOVES
+
+Turn 103: AI 1 (Dice: (6, 3))
+    Time: 0.00124s
+    Moves: NO LEGAL MOVES
+
+Turn 104: AI 2 (Dice: (3, 5))
+    Time: 0.00105s
+    Moves: NO LEGAL MOVES
+
+Turn 105: AI 1 (Dice: (2, 1))
+    Time: 0.00122s
+    Moves: (BAR->23)
+
+Turn 106: AI 2 (Dice: (5, 1))
+    Time: 0.01060s
+    Moves: (BAR->23), (7->2)
+
+Turn 107: AI 1 (Dice: (4, 4))
+    Time: 0.00093s
+    Moves: (7->3), (7->3), (7->3), (7->3)
+
+Turn 108: AI 2 (Dice: (3, 1))
+    Time: 0.01963s
+    Moves: (15->12), (15->14)
+
+Turn 109: AI 1 (Dice: (2, 3))
+    Time: 0.01890s
+    Moves: (14->12), (10->7)
+
+Turn 110: AI 2 (Dice: (3, 1))
+    Time: 0.00568s
+    Moves: (BAR->23), (10->7)
+
+Turn 111: AI 1 (Dice: (1, 4))
+    Time: 0.00693s
+    Moves: (14->10)
+
+Turn 112: AI 2 (Dice: (2, 1))
+    Time: 0.00103s
+    Moves: (14->12)
+
+Turn 113: AI 1 (Dice: (3, 3))
+    Time: 0.00119s
+    Moves: (10->7), (10->7), (10->7), (10->7)
+
+Turn 114: AI 2 (Dice: (3, 6))
+    Time: 0.00269s
+    Moves: (23->17), (10->7)
+
+Turn 115: AI 1 (Dice: (3, 6))
+    Time: 0.00351s
+    Moves: (23->17), (10->7)
+
+Turn 116: AI 2 (Dice: (5, 2))
+    Time: 0.00104s
+    Moves: NO LEGAL MOVES
+
+Turn 117: AI 1 (Dice: (4, 1))
+    Time: 0.00127s
+    Moves: (BAR->23), (14->10)
+
+Turn 118: AI 2 (Dice: (6, 4))
+    Time: 0.00626s
+    Moves: NO LEGAL MOVES
+
+Turn 119: AI 1 (Dice: (2, 6))
+    Time: 0.00629s
+    Moves: NO LEGAL MOVES
+
+Turn 120: AI 2 (Dice: (4, 5))
+    Time: 0.00612s
+    Moves: NO LEGAL MOVES
+
+Turn 121: AI 1 (Dice: (2, 2))
+    Time: 0.00637s
+    Moves: NO LEGAL MOVES
+
+Turn 122: AI 2 (Dice: (1, 2))
+    Time: 0.01101s
+    Moves: (BAR->23), (12->10)
+
+Turn 123: AI 1 (Dice: (3, 5))
+    Time: 0.01020s
+    Moves: (7->2), (10->7)
+
+Turn 124: AI 2 (Dice: (4, 6))
+    Time: 0.00169s
+    Moves: (14->10), (23->17)
+
+Turn 125: AI 1 (Dice: (2, 1))
+    Time: 0.00115s
+    Moves: (17->15), (15->14)
+
+Turn 126: AI 2 (Dice: (3, 4))
+    Time: 0.00344s
+    Moves: (10->7), (14->10)
+
+Turn 127: AI 1 (Dice: (6, 2))
+    Time: 0.00176s
+    Moves: (23->17), (17->15)
+
+Turn 128: AI 2 (Dice: (5, 2))
+    Time: 0.00324s
+    Moves: (17->15), (7->2)
+
+Turn 129: AI 1 (Dice: (2, 4))
+    Time: 0.00061s
+    Moves: (17->15)
+
+Turn 130: AI 2 (Dice: (4, 4))
+    Time: 0.00054s
+    Moves: NO LEGAL MOVES
+
+Turn 131: AI 1 (Dice: (4, 3))
+    Time: 0.00055s
+    Moves: NO LEGAL MOVES
+
+Turn 132: AI 2 (Dice: (5, 2))
+    Time: 0.00050s
+    Moves: NO LEGAL MOVES
+
+Turn 133: AI 1 (Dice: (5, 4))
+    Time: 0.00055s
+    Moves: NO LEGAL MOVES
+
+Turn 134: AI 2 (Dice: (3, 3))
+    Time: 0.00049s
+    Moves: NO LEGAL MOVES
+
+Turn 135: AI 1 (Dice: (2, 5))
+    Time: 0.00054s
+    Moves: NO LEGAL MOVES
+
+Turn 136: AI 2 (Dice: (6, 4))
+    Time: 0.00050s
+    Moves: NO LEGAL MOVES
+
+Turn 137: AI 1 (Dice: (1, 4))
+    Time: 0.00056s
+    Moves: (BAR->23)
+
+Turn 138: AI 2 (Dice: (4, 5))
+    Time: 0.00104s
+    Moves: NO LEGAL MOVES
+
+Turn 139: AI 1 (Dice: (4, 3))
+    Time: 0.00117s
+    Moves: NO LEGAL MOVES
+
+Turn 140: AI 2 (Dice: (5, 2))
+    Time: 0.00109s
+    Moves: NO LEGAL MOVES
+
+Turn 141: AI 1 (Dice: (4, 5))
+    Time: 0.00116s
+    Moves: NO LEGAL MOVES
+
+Turn 142: AI 2 (Dice: (5, 4))
+    Time: 0.00120s
+    Moves: NO LEGAL MOVES
+
+Turn 143: AI 1 (Dice: (1, 6))
+    Time: 0.00124s
+    Moves: (BAR->23), (23->17)
+
+Turn 144: AI 2 (Dice: (3, 3))
+    Time: 0.01125s
+    Moves: NO LEGAL MOVES
+
+Turn 145: AI 1 (Dice: (2, 3))
+    Time: 0.00683s
+    Moves: NO LEGAL MOVES
+
+Turn 146: AI 2 (Dice: (4, 5))
+    Time: 0.00657s
+    Moves: NO LEGAL MOVES
+
+Turn 147: AI 1 (Dice: (2, 5))
+    Time: 0.00689s
+    Moves: NO LEGAL MOVES
+
+Turn 148: AI 2 (Dice: (6, 4))
+    Time: 0.00655s
+    Moves: NO LEGAL MOVES
+
+Turn 149: AI 1 (Dice: (2, 4))
+    Time: 0.00700s
+    Moves: NO LEGAL MOVES
+
+Turn 150: AI 2 (Dice: (5, 3))
+    Time: 0.00659s
+    Moves: NO LEGAL MOVES
+
+Turn 151: AI 1 (Dice: (4, 5))
+    Time: 0.00709s
+    Moves: NO LEGAL MOVES
+
+Turn 152: AI 2 (Dice: (5, 1))
+    Time: 0.01333s
+    Moves: (BAR->23), (7->2)
+
+Turn 153: AI 1 (Dice: (1, 1))
+    Time: 0.00723s
+    Moves: NO LEGAL MOVES
+
+Turn 154: AI 2 (Dice: (5, 2))
+    Time: 0.00925s
+    Moves: (17->15), (15->10)
+
+Turn 155: AI 1 (Dice: (2, 4))
+    Time: 0.00122s
+    Moves: NO LEGAL MOVES
+
+Turn 156: AI 2 (Dice: (4, 3))
+    Time: 0.00105s
+    Moves: (10->7)
+
+Turn 157: AI 1 (Dice: (1, 2))
+    Time: 0.00113s
+    Moves: NO LEGAL MOVES
+
+Turn 158: AI 2 (Dice: (1, 5))
+    Time: 0.00104s
+    Moves: (7->2)
+
+Turn 159: AI 1 (Dice: (6, 2))
+    Time: 0.00115s
+    Moves: (23->17), (17->15)
+
+Turn 160: AI 2 (Dice: (3, 5))
+    Time: 0.00181s
+    Moves: (7->2), (10->7)
+
+Turn 161: AI 1 (Dice: (4, 6))
+    Time: 0.00122s
+    Moves: (23->17)
+
+Turn 162: AI 2 (Dice: (2, 1))
+    Time: 0.00113s
+    Moves: NO LEGAL MOVES
+
+Turn 163: AI 1 (Dice: (5, 4))
+    Time: 0.00127s
+    Moves: (7->2)
+
+Turn 164: AI 2 (Dice: (5, 1))
+    Time: 0.00113s
+    Moves: (7->2)
+
+Turn 165: AI 1 (Dice: (6, 6))
+    Time: 0.00065s
+    Moves: (23->17), (23->17), (23->17), (23->17)
+
+Turn 166: AI 2 (Dice: (3, 3))
+    Time: 0.00122s
+    Moves: (10->7), (10->7), (10->7), (10->7)
+
+Turn 167: AI 1 (Dice: (2, 3))
+    Time: 0.00130s
+    Moves: (10->7)
+
+Turn 168: AI 2 (Dice: (6, 2))
+    Time: 0.00111s
+    Moves: NO LEGAL MOVES
+
+Turn 169: AI 1 (Dice: (3, 3))
+    Time: 0.00127s
+    Moves: (10->7), (10->7), (10->7), (10->7)
+
+Turn 170: AI 2 (Dice: (4, 6))
+    Time: 0.00117s
+    Moves: NO LEGAL MOVES
+
+Turn 171: AI 1 (Dice: (6, 5))
+    Time: 0.00129s
+    Moves: (7->2)
+
+Turn 172: AI 2 (Dice: (5, 4))
+    Time: 0.00113s
+    Moves: (7->2)
+
+Turn 173: AI 1 (Dice: (2, 4))
+    Time: 0.00123s
+    Moves: NO LEGAL MOVES
+
+Turn 174: AI 2 (Dice: (6, 2))
+    Time: 0.00113s
+    Moves: NO LEGAL MOVES
+
+Turn 175: AI 1 (Dice: (1, 4))
+    Time: 0.00123s
+    Moves: NO LEGAL MOVES
+
+Turn 176: AI 2 (Dice: (1, 3))
+    Time: 0.00113s
+    Moves: (10->7)
+
+Turn 177: AI 1 (Dice: (5, 3))
+    Time: 0.00207s
+    Moves: (7->2), (10->7)
+
+Turn 178: AI 2 (Dice: (2, 3))
+    Time: 0.00120s
+    Moves: (10->7)
+
+Turn 179: AI 1 (Dice: (5, 3))
+    Time: 0.00200s
+    Moves: (7->2), (10->7)
+
+Turn 180: AI 2 (Dice: (6, 3))
+    Time: 0.00111s
+    Moves: (10->7)
+
+Turn 181: AI 1 (Dice: (3, 5))
+    Time: 0.00197s
+    Moves: (7->2), (10->7)
+
+Turn 182: AI 2 (Dice: (4, 2))
+    Time: 0.00115s
+    Moves: NO LEGAL MOVES
+
+Turn 183: AI 1 (Dice: (4, 4))
+    Time: 0.00124s
+    Moves: NO LEGAL MOVES
+
+Turn 184: AI 2 (Dice: (2, 3))
+    Time: 0.00117s
+    Moves: (10->7)
+
+Turn 185: AI 1 (Dice: (3, 5))
+    Time: 0.00197s
+    Moves: (7->2), (10->7)
+
+Turn 186: AI 2 (Dice: (3, 4))
+    Time: 0.00113s
+    Moves: (10->7)
+
+Turn 187: AI 1 (Dice: (2, 2))
+    Time: 0.00123s
+    Moves: NO LEGAL MOVES
+
+Turn 188: AI 2 (Dice: (4, 1))
+    Time: 0.00114s
+    Moves: NO LEGAL MOVES
+
+Turn 189: AI 1 (Dice: (5, 4))
+    Time: 0.00126s
+    Moves: (7->2)
+
+Turn 190: AI 2 (Dice: (5, 4))
+    Time: 0.00113s
+    Moves: (7->2)
+
+Turn 191: AI 1 (Dice: (1, 4))
+    Time: 0.00123s
+    Moves: NO LEGAL MOVES
+
+Turn 192: AI 2 (Dice: (1, 6))
+    Time: 0.00113s
+    Moves: NO LEGAL MOVES
+
+Turn 193: AI 1 (Dice: (3, 3))
+    Time: 0.00127s
+    Moves: (10->7), (10->7), (10->7), (10->7)
+
+Turn 194: AI 2 (Dice: (5, 6))
+    Time: 0.00114s
+    Moves: (7->2)
+
+Turn 195: AI 1 (Dice: (3, 5))
+    Time: 0.00205s
+    Moves: (7->2), (10->7)
+
+Turn 196: AI 2 (Dice: (6, 2))
+    Time: 0.00111s
+    Moves: NO LEGAL MOVES
+
+Turn 197: AI 1 (Dice: (5, 2))
+    Time: 0.00126s
+    Moves: (7->2)
+
+Turn 198: AI 2 (Dice: (5, 5))
+    Time: 0.00119s
+    Moves: (7->2), (7->2), (7->2), (7->2)
+
+Turn 199: AI 1 (Dice: (3, 3))
+    Time: 0.00134s
+    Moves: (10->7), (10->7), (10->7), (10->7)
+
+Turn 200: AI 2 (Dice: (6, 3))
+    Time: 0.00118s
+    Moves: NO LEGAL MOVES
+
+Turn 201: AI 1 (Dice: (2, 4))
+    Time: 0.00129s
+    Moves: NO LEGAL MOVES
+
+Turn 202: AI 2 (Dice: (1, 1))
+    Time: 0.00130s
+    Moves: (BAR->23)
+
+Turn 203: AI 1 (Dice: (5, 2))
+    Time: 0.00137s
+    Moves: NO LEGAL MOVES
+
+Turn 204: AI 2 (Dice: (5, 1))
+    Time: 0.00129s
+    Moves: NO LEGAL MOVES
+
+Turn 205: AI 1 (Dice: (3, 5))
+    Time: 0.00130s
+    Moves: NO LEGAL MOVES
+
+Turn 206: AI 2 (Dice: (2, 3))
+    Time: 0.00126s
+    Moves: NO LEGAL MOVES
+
+Turn 207: AI 1 (Dice: (6, 5))
+    Time: 0.00136s
+    Moves: NO LEGAL MOVES
+
+Turn 208: AI 2 (Dice: (4, 6))
+    Time: 0.00122s
+    Moves: NO LEGAL MOVES
+
+Turn 209: AI 1 (Dice: (3, 5))
+    Time: 0.00145s
+    Moves: NO LEGAL MOVES
+
+Turn 210: AI 2 (Dice: (2, 4))
+    Time: 0.00120s
+    Moves: NO LEGAL MOVES
+
+Turn 211: AI 1 (Dice: (5, 4))
+    Time: 0.00135s
+    Moves: NO LEGAL MOVES
+
+Turn 212: AI 2 (Dice: (6, 1))
+    Time: 0.00125s
+    Moves: NO LEGAL MOVES
+
+*** DEADLOCK DETECTED (10 consecutive passes) ***
+
+----------------------------------------
+GAME OVER
+Result: DRAW (Stalemate)
+Total Turns: 213
