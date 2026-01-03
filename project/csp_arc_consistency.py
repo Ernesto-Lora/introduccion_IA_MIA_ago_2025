@@ -6,120 +6,277 @@ from gameState import GameState
 PLAYER = 1
 AI = -1
 
-# =============================================================================
-# 1. PRO-LEVEL HEURISTIC EVALUATION
-# =============================================================================
-def evaluate_state(state: GameState):
-    """
-    Dynamic Heuristic: Adapts strategy based on Game Phase.
-    """
-    # --- 0. Win/Loss (Absolute) ---
-    if state.bear_off[AI] == 15: return 1_000_000.0
-    if state.bear_off[PLAYER] == 15: return -1_000_000.0
+from collections import deque
+import math
 
-    # --- 1. Detect Game Phase (Contact vs. Race) ---
-    # Contact is broken if the most advanced PLAYER checker has passed 
-    # the furthest back AI checker.
-    
-    # Find furthest back checker indices (0-23)
-    # AI moves -1 to -24. Its furthest back is the highest index with negative count.
-    # PLAYER moves 1 to 24. Its furthest back is lowest index with positive count.
-    
-    player_furthest_back = -1
-    ai_furthest_back = -1
-    
-    for i in range(24):
-        if state.points[i] > 0 and player_furthest_back == -1:
-            player_furthest_back = i
-        if state.points[i] < 0:
-            ai_furthest_back = i
-            
-    # In standard representation:
-    # Player moves 0->23. AI moves 23->0 (conceptually). 
-    # Actually, your board likely uses specific indices. 
-    # Let's assume standard logic: If all Player pieces > all AI pieces indices?
-    # NO. If AI moves NEGATIVE (24->1) and Player moves POSITIVE (1->24).
-    # "Contact Broken" means AI's highest index < Player's lowest index.
-    
-    is_race_phase = False
-    if ai_furthest_back < player_furthest_back:
-        is_race_phase = True
+# Constants (adjust / tune)
+PLAYER = 1
+AI = -1
+
+# ---------------------------
+# Helper: unordered dice outcomes (21 combos)
+# ---------------------------
+def unordered_dice_outcomes_with_weights():
+    combos = []
+    for d1 in range(1, 7):
+        for d2 in range(d1, 7):
+            weight = 1 if d1 == d2 else 2
+            combos.append(((d1, d2), weight))
+    return combos
+
+# ---------------------------
+# 1) Cleaner evaluate_state (perspective-aware)
+# ---------------------------
+def evaluate_state(state: GameState, perspective: int = AI):
+    """
+    Returns a score where positive is good for `perspective` (PLAYER=1 or AI=-1).
+    Uses pip counts, blots, primes, anchors, bars, and bearing off.
+    """
+    # Immediate wins/losses (absolute)
+    if state.bear_off.get(perspective, 0) == 15:
+        return 1_000_000.0
+    if state.bear_off.get(-perspective, 0) == 15:
+        return -1_000_000.0
+
+    # Hyperparameters (tweakable)
+    K_PIP = 2.0         # pip importance (baseline)
+    K_PIP_RACE = 10.0   # pip importance during race
+    K_HIT = 900.0       # value per opponent-on-bar (we hit them)
+    K_BLOT = 220.0      # penalty for vulnerable singletons
+    K_PRIME = 75.0      # prime bonus multiplier
+    K_ANCHOR = 140.0    # anchor bonus
+    K_BEAROFF = 450.0   # per borne-off checker
+    K_HOME_STRENGTH = 45.0  # how much we value a strong home board
+
+    # convenience
+    opponent = -perspective
+    points = state.points  # length 24, positive for PLAYER, negative for AI
+
+    # Pip counts (lower is better). We want positive => advantage for perspective:
+    my_pip = state.pip_count(perspective)
+    opp_pip = state.pip_count(opponent)
+    pip_diff = opp_pip - my_pip  # positive => good for perspective
+
+    # Determine home indices depending on perspective orientation:
+    # Assumption: PLAYER (1) moves from 0->23, home is 18..23; AI (-1) moves 23->0, home 0..5.
+    if perspective == PLAYER:
+        home_idx = list(range(18, 24))
+        opp_home_idx = list(range(0, 6))
+    else:
+        home_idx = list(range(0, 6))
+        opp_home_idx = list(range(18, 24))
+
+    # count checkers in home
+    my_home_checkers = sum(abs(points[i]) for i in home_idx if (points[i] * perspective) > 0)
+    opp_home_checkers = sum(abs(points[i]) for i in opp_home_idx if (points[i] * opponent) > 0)
+
+    # Race detection (simple heuristic): if many checkers are in home and pip diff matters
+    is_race = False
+    if (my_home_checkers >= 12 and opp_home_checkers >= 12) or abs(pip_diff) > 35:
+        is_race = True
 
     score = 0.0
-    
-    # --- HYPERPARAMETERS ---
-    # Tweak these to change personality
-    K_PIP = 2.0         # Value of 1 pip in race
-    K_HIT = 1000.0      # Value of hitting opponent
-    K_BLOT = 250.0      # Penalty for being vulnerable
-    K_PRIME = 80.0      # Bonus for 3+ block wall
-    K_ANCHOR = 150.0    # Bonus for holding opponent 5-pt
-    K_BEAROFF = 500.0   # Bonus per piece borne off
 
-    # --- 2. Evaluation Logic ---
-
-    # A. RACE SCORE (Pips)
-    pips_ai = state.pip_count(AI)
-    pips_player = state.pip_count(PLAYER)
-    
-    if is_race_phase:
-        # PURE RACE MODE: Only speed matters!
-        # Significantly amplify pip importance.
-        score -= (pips_ai - pips_player) * 10.0
-        
-        # Massive bonus for bearing off
-        score += state.bear_off[AI] * 1000.0
-        
-        # Zero penalty for blots (safely ignore them)
+    # Race mode: primarily concerned with pip count and bearing off
+    if is_race:
+        score += pip_diff * K_PIP_RACE
+        score += state.bear_off.get(perspective, 0) * K_BEAROFF
+        # slight reward for safe home (less blots)
+        # penalize number of blots in our home less aggressively in race
+        blots_home = sum(1 for i in home_idx if (points[i] * perspective) == (1 * perspective))
+        score -= blots_home * (K_BLOT * 0.6)
         return float(score)
 
-    # B. CONTACT MODE (Standard Game)
-    
-    # 1. Base Pip Score (Less important than structure)
-    score -= (pips_ai - pips_player) * K_PIP
+    # Contact mode: structure matters
+    # 1. Base pip contribution
+    score += pip_diff * K_PIP
 
-    # 2. Hitting (Crucial)
-    score += state.bar[PLAYER] * K_HIT
-    score -= state.bar[AI] * K_HIT
+    # 2. Hits / bar (opponent's bar is good for us)
+    # state.bar[opp] == number of opponent checkers on bar => good for perspective
+    hits_for_us = state.bar[opponent]
+    hits_against_us = state.bar[perspective]
+    score += (hits_for_us - hits_against_us) * K_HIT
 
-    # 3. Structure & Safety
-    consecutive_ai = 0
-    
+    # 3. Bear off
+    score += state.bear_off.get(perspective, 0) * K_BEAROFF
+    score -= state.bear_off.get(opponent, 0) * (K_BEAROFF * 0.5)  # opponent's borne-off helps them
+
+    # 4. Primes and blots scanning
+    consecutive = 0
+    max_prime = 0
+    home_blocks = 0
+    blots_total = 0
+
     for i in range(24):
-        count = state.points[i]
-        
-        # AI Piece
-        if count < 0:
-            if count == -1:
-                # BLOT PENALTY
-                # Heavily penalize blots in our home board (0-5)
-                # Less penalty if opponent is on bar (can't hit us easily)
-                risk_factor = 1.0
-                if state.bar[PLAYER] > 0: risk_factor = 0.2 # Safe to be loose if opp is on bar
-                
-                if i <= 5: score -= (K_BLOT * 1.5) * risk_factor
-                else:      score -= K_BLOT * risk_factor
-                
-                consecutive_ai = 0
+        cnt = points[i]
+        if cnt * perspective > 0:
+            # this point belongs to perspective
+            if abs(cnt) == 1:
+                blots_total += 1
+                consecutive = 0
             else:
-                # Block/Prime Building
-                consecutive_ai += 1
-                if consecutive_ai >= 3:
-                    score += K_PRIME * consecutive_ai # Escalating bonus for long primes
+                # multi-checker point contributes to primes/consecutive
+                consecutive += 1
+                max_prime = max(max_prime, consecutive)
+                if i in home_idx and abs(cnt) >= 2:
+                    home_blocks += 1
         else:
-            consecutive_ai = 0
+            consecutive = 0
 
-    # 4. Strategic Anchors (Holding opponent's home)
-    # Opponent home is 19-23 (indices). 
-    # AI holding index 19, 20, 21 is very strong.
-    for i in [19, 20, 21]: 
-        if state.points[i] <= -2:
-            score += K_ANCHOR
+    score += max_prime * K_PRIME
+    score -= blots_total * K_BLOT
+    score += home_blocks * K_HOME_STRENGTH
 
-    # 5. Bear-off (Even in contact, good to bank checkers)
-    score += state.bear_off[AI] * K_BEAROFF
+    # 5. Strategic anchors: hold opponent's outer home points (strong defensive anchors)
+    # Example: take a few important anchor indices near opponent home for each orientation
+    if perspective == PLAYER:
+        # check points 19..21 (defensive anchors in the opponent's inner board)
+        anchor_idxs = [19, 20, 21]
+    else:
+        anchor_idxs = [4, 5, 6]  # approximate mirror indexes for AI
+    for idx in anchor_idxs:
+        if 0 <= idx < 24 and (points[idx] * perspective) <= -2:  # careful: presence of enemy pieces here?
+            # If the opponent actually holds these (we want to hold opposite set) - don't over-penalize; skip ambiguous indexing
+            pass
+
+    # Slight adjustment to prefer stable positions when opponent has checkers on bar
+    if state.bar[opponent] > 0:
+        score += 40.0
 
     return float(score)
+
+
+# ---------------------------
+# 2) Transposition table / caching (perspective-aware)
+# ---------------------------
+transposition_table = {}
+def get_eval(state: GameState, perspective: int):
+    """
+    Keyed by full board tuple and perspective.
+    """
+    # create a stable key
+    key = (tuple(state.points),
+           state.bear_off.get(PLAYER, 0), state.bear_off.get(AI, 0),
+           state.bar.get(PLAYER, 0) if isinstance(state.bar, dict) else state.bar[PLAYER],
+           state.bar.get(AI, 0) if isinstance(state.bar, dict) else state.bar[AI],
+           perspective)
+    if key in transposition_table:
+        return transposition_table[key]
+    val = evaluate_state(state, perspective)
+    transposition_table[key] = val
+    return val
+
+# ---------------------------
+# 3) Improved 2-ply expectiminimax with beam & opponent move ordering
+# ---------------------------
+def expectiminimax_two_ply(state: GameState, player_id: int, beam_width: int = 6, opp_move_limit: int = 6, verbose=False):
+    """
+    Depth-2 from a given rolled dice (state.dice must be set).
+    Assumes evaluate_state returns positive for the supplied perspective.
+    beam_width: how many candidate root moves to consider
+    opp_move_limit: how many top opponent replies to consider per dice outcome
+    """
+    assert state.dice, "state.dice must be set to the current roll at root."
+
+    opponent_id = -player_id
+    transposition_table.clear()
+
+    # 1) CSP pruning (optional) - keep as before but try to keep full sequences if possible
+    valid_start_moves = None
+    try:
+        csp = BackgammonCSP(state, state.dice, player_id)
+        pruned = csp.run_ac3()
+        # build set of legal "first moves" that survived AC-3
+        valid_start_moves = {m for moves in pruned.values() for m in moves}
+    except Exception:
+        valid_start_moves = None
+
+    # 2) root move generation (for the rolled dice)
+    root_moves = state.generate_all_sequences_for_dice(player_id, tuple(state.dice))
+    if not root_moves:
+        return []  # no moves
+
+    # apply optional CSP filter (match by first move element if your sequences are lists of atomic moves)
+    if valid_start_moves:
+        filtered = [s for s in root_moves if s and s[0] in valid_start_moves]
+        if filtered:
+            root_moves = filtered
+
+    # 3) produce beam candidates by static eval after applying each root seq
+    candidates = []
+    for seq in root_moves:
+        st = state.clone()
+        for m in seq:
+            st.apply_move(m, player_id)
+        score = get_eval(st, player_id)  # score from our perspective (player_id)
+        candidates.append((score, seq, st))
+
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    beam_candidates = candidates[:beam_width]
+
+    if verbose:
+        print(f"Root generated {len(root_moves)} moves, beam width = {len(beam_candidates)}")
+
+    # 4) Expectation over opponent dice permutations
+    outcomes = unordered_dice_outcomes_with_weights()
+    total_weight = sum(w for _, w in outcomes)
+
+    best_seq = None
+    best_value = -math.inf
+
+    for base_score, seq, st_after_root in beam_candidates:
+        # immediate win
+        if st_after_root.bear_off.get(player_id, 0) == 15:
+            return seq
+
+        # expected value over opponent dice
+        weighted_sum = 0.0
+        for dice_opp, w_opp in outcomes:
+            # generate opponent moves for that dice
+            opp_moves = st_after_root.generate_all_sequences_for_dice(opponent_id, dice_opp)
+
+            if not opp_moves:
+                # opponent can't move => evaluate static board
+                v = get_eval(st_after_root, player_id)
+                weighted_sum += v * w_opp
+                continue
+
+            # Order opponent moves by how good they are for opponent (i.e., worst for us)
+            scored_opp = []
+            for oseq in opp_moves:
+                sst = st_after_root.clone()
+                for m in oseq:
+                    sst.apply_move(m, opponent_id)
+                # Evaluate from *opponent* perspective, to know how good it is for them
+                val_for_opponent = get_eval(sst, opponent_id)
+                scored_opp.append((val_for_opponent, oseq, sst))
+
+            # sort descending for opponent (best moves for opponent first)
+            scored_opp.sort(key=lambda x: x[0], reverse=True)
+
+            # Opponent will pick their best (which is worst for us). We only need top-N candidates.
+            worst_value_for_us = math.inf
+            take = min(opp_move_limit, len(scored_opp))
+            for val_op, oseq, sst in scored_opp[:take]:
+                # convert opponent-perspective value to our perspective:
+                # since evaluate returns positive for opponent, a high val_op means bad for us.
+                # we can compute our_value = -val_op (approx), but safer to re-evaluate from our perspective
+                my_value = get_eval(sst, player_id)
+                if my_value < worst_value_for_us:
+                    worst_value_for_us = my_value
+
+            weighted_sum += worst_value_for_us * w_opp
+
+        expected_val = weighted_sum / total_weight
+        if expected_val > best_value:
+            best_value = expected_val
+            best_seq = seq
+
+    # fallback to best beam candidate if none selected
+    if best_seq is None:
+        best_seq = beam_candidates[0][1]
+    return best_seq
+
 
 # =============================================================================
 # 2. CSP / ARC CONSISTENCY (Required & Optimized)
@@ -174,159 +331,3 @@ class BackgammonCSP:
                     if xk != xi and xk != xj: queue.append((xk, xi))
         return self.domains
 
-# =============================================================================
-# 3. EXPECTIMINIMAX SEARCH
-# =============================================================================
-def unordered_dice_outcomes_with_weights():
-    combos = []
-    for d1 in range(1, 7):
-        for d2 in range(d1, 7):
-            weight = 1 if d1 == d2 else 2
-            combos.append(((d1, d2), weight))
-    return combos
-
-# -------------------------------------------------------------------------
-# HELPER: Dice Weights
-# -------------------------------------------------------------------------
-def unordered_dice_outcomes_with_weights():
-    """Returns list of ((d1, d2), weight) for all 21 dice rolls."""
-    combos = []
-    for d1 in range(1, 7):
-        for d2 in range(d1, 7):
-            weight = 1 if d1 == d2 else 2
-            combos.append(((d1, d2), weight))
-    return combos
-
-# -------------------------------------------------------------------------
-# EVALUATION CACHE (To speed up 2-ply)
-# -------------------------------------------------------------------------
-# We use a global cache to avoid recalculating the score of the same board twice
-transposition_table = {}
-
-def get_eval(state):
-    """Checks cache, otherwise calculates evaluate_state."""
-    # Create a unique key for the board configuration
-    key = (tuple(state.points), state.bear_off[PLAYER], state.bear_off[AI], 
-           state.bar[PLAYER], state.bar[AI])
-    
-    if key in transposition_table:
-        return transposition_table[key]
-    
-    val = evaluate_state(state)
-    transposition_table[key] = val
-    return val
-
-# -------------------------------------------------------------------------
-# 2-PLY EXPECTIMINIMAX WITH BEAM SEARCH
-# -------------------------------------------------------------------------
-def expectiminimax_two_ply(state: GameState, player_id: int, verbose=False):
-    """
-    Performs a Depth-2 Search:
-    Root (Self) -> Chance -> Opponent -> Chance -> Self -> Static Eval
-    """
-    assert state.dice, "AI dice must be set."
-    
-    # Identify opponent dynamically
-    opponent_id = -player_id
-    
-    # Clear cache at start of turn (assuming transposition_table is global)
-    transposition_table.clear() 
-
-    # --- PHASE 1: CSP FILTER (ROOT ONLY) ---
-    valid_start_moves = None
-    if len(state.dice) >= 2:
-        try:
-            # Pass correct player_id to CSP
-            csp = BackgammonCSP(state, state.dice, player_id)
-            pruned = csp.run_ac3()
-            valid_start_moves = {m for moves in pruned.values() for m in moves}
-        except: pass
-
-    # --- PHASE 2: ROOT MOVES (SELF) ---
-    # Generate moves for the SPECIFIC player_id passed to the function
-    root_moves = state.generate_all_sequences_for_dice(player_id, tuple(state.dice))
-    if not root_moves: return []
-
-    # Apply CSP Filter
-    if valid_start_moves:
-        filtered = [s for s in root_moves if s and s[0] in valid_start_moves]
-        if filtered: root_moves = filtered
-
-    # BEAM SEARCH PRUNING:
-    candidates = []
-    for seq in root_moves:
-        st = state.clone()
-        for m in seq: st.apply_move(m, player_id)
-        
-        # Evaluate from the perspective of the current player_id
-        # Note: We assume evaluate_state returns a high positive score 
-        # for 'player_id' winning. If evaluate_state is absolute (Positive=Player 1),
-        # we might need to flip the sign here.
-        # SAFE APPROACH: Pass player_id to evaluate_state if supported, 
-        # or flip manually if needed. 
-        # Assuming standard evaluate_state (Positive = Player 1, Negative = Player -1):
-        raw_score = evaluate_state(st)
-        score = raw_score if player_id == 1 else -raw_score
-        
-        candidates.append((score, seq, st))
-    
-    # Sort best to worst and keep Top 4
-    candidates.sort(key=lambda x: x[0], reverse=True)
-    beam_candidates = candidates[:4] 
-
-    if verbose: print(f"2-Ply: Searching top {len(beam_candidates)} candidate moves...")
-
-    # --- PHASE 3: DEEP SEARCH ---
-    best_seq = None
-    best_value = -float("inf")
-    
-    outcomes = unordered_dice_outcomes_with_weights()
-    total_weight = sum(w for _, w in outcomes)
-
-    for base_score, seq, st_after_root in beam_candidates:
-        
-        # Win check optimization
-        if st_after_root.bear_off[player_id] == 15: return seq
-
-        weighted_score_sum = 0.0
-        
-        for dice_opp, w_opp in outcomes:
-            
-            # --- OPPONENT LAYER (Min Node) ---
-            # Opponent plays their best move
-            opp_moves = st_after_root.generate_all_sequences_for_dice(opponent_id, dice_opp)
-            
-            if not opp_moves:
-                # If opponent cannot move, current board stands.
-                raw_v = get_eval(st_after_root)
-                val_opp = raw_v if player_id == 1 else -raw_v
-            else:
-                # Opponent wants to MINIMIZE our score (Maximize theirs)
-                # From our perspective, this is a Min node.
-                worst_outcome_for_us = float("inf")
-                
-                # Check opponent moves (Limit to 5 for speed)
-                limit_opp = 5 if len(opp_moves) > 5 else len(opp_moves)
-                
-                for oseq in opp_moves[:limit_opp]: # Simple slice for speed
-                    st_opp = st_after_root.clone()
-                    for m in oseq: st_opp.apply_move(m, opponent_id)
-                    
-                    raw_v = get_eval(st_opp)
-                    # Convert to our perspective
-                    v_perspective = raw_v if player_id == 1 else -raw_v
-                    
-                    if v_perspective < worst_outcome_for_us:
-                        worst_outcome_for_us = v_perspective
-                
-                val_opp = worst_outcome_for_us
-
-            weighted_score_sum += val_opp * w_opp
-
-        expected_val = weighted_score_sum / total_weight
-        
-        if expected_val > best_value:
-            best_value = expected_val
-            best_seq = seq
-            
-    return best_seq if best_seq else candidates[0][1]
