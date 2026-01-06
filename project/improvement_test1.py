@@ -324,8 +324,8 @@ class BackgammonUI:
         sys.exit()
 
     def roll_for_player(self):
-        d1 = random.randint(1, 6)
-        d2 = random.randint(1, 6)
+        d1 = 6
+        d2 = 6
         if d1 == d2:
             self.state.dice = (d1, d1)
             self.state.dice_left = [d1] * 4
@@ -517,8 +517,8 @@ class BackgammonUI:
         self.do_ai_turn()
 
     def do_ai_turn(self):
-        d1 = random.randint(1, 6)
-        d2 = random.randint(1, 6)
+        d1 = 6
+        d2 = 6
         if d1 == d2:
             self.state.dice = (d1, d1)
             self.state.dice_left = [d1] * 4

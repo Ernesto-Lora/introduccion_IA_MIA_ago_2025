@@ -1,0 +1,82 @@
+\section{Heuristic Evaluation Function}
+
+\subsection{Base Implementation}
+The base agent employed a simplistic linear combination of three features:
+\begin{equation}
+    V_{base}(s) = 30 \cdot \Delta_{borne} + 0.05 \cdot \Delta_{pips} + 0.2 \cdot \Delta_{pieces}
+\end{equation}
+Where $\Delta$ represents the difference between the AI and the player. This function failed to capture critical tactical elements such as \textit{primes} (blocking formations) or \textit{blots} (vulnerable checkers).
+
+\subsection{Improved Implementation: Context-Aware Evaluation}
+The improved evaluation function, $V_{impr}(s)$, is state-dependent. It first detects if the game has entered a ``Race'' phase (no contact possible) or remains in ``Contact'' mode.
+
+\subsubsection{Race Mode}
+When both sides have passed each other, the agent prioritizes speed (pip count) and safety:
+\begin{equation}
+    V_{race}(s) = w_{race} \cdot \Delta_{pips} + w_{bearoff} \cdot N_{off} - w_{blot} \cdot N_{home\_blots}
+\end{equation}
+Where $N_{off}$ is the number of checkers borne off. The weight $w_{race}$ is significantly increased ($10.0$) to prioritize running.
+
+\subsubsection{Contact Mode}
+In contact mode, structural features are essential. The evaluation function expands to:
+\begin{align}
+    V_{contact}(s) = & \ w_{pip} \cdot \Delta_{pips} \nonumber \\
+    & + w_{hit} \cdot (Bar_{opp} - Bar_{self}) \nonumber \\
+    & + w_{prime} \cdot L_{prime} \nonumber \\
+    & + w_{anchor} \cdot I_{anchor} \nonumber \\
+    & - w_{blot} \cdot N_{blots}
+\end{align}
+Key parameters include:
+\begin{itemize}
+    \item \textbf{Primes ($L_{prime}$):} Rewards consecutive blocks to trap the opponent.
+    \item \textbf{Anchors ($I_{anchor}$):} Rewards holding defensive points in the opponent's home board to prevent safe reentry.
+    \item \textbf{Hit Value ($w_{hit}$):} Heavily weighted ($900.0$) to prioritize sending the opponent to the bar.
+\end{itemize}
+
+\section{Search Algorithm Improvements}
+
+\subsection{Expectiminimax with Beam Search}
+The base implementation used a 1-ply search. The improvement extends this to 2-ply (looking ahead to the opponent's response). To mitigate the branching factor ($21$ dice outcomes $\times$ massive move permutations), \textit{Beam Search} is applied.
+
+Let $Actions(s, d)$ be the set of legal move sequences for state $s$ given dice $d$. The value of a state $s$ for player $P$ is:
+\begin{equation}
+    Val(s) = \max_{a \in Beam(Actions(s, d))} \left[ \sum_{d' \in Outcomes} P(d') \cdot \min_{b \in TopK(Actions(s', d'))} H(s'') \right]
+\end{equation}
+\begin{itemize}
+    \item \textbf{Beam Width:} Only the top $k$ moves (determined by static evaluation) are expanded at the root.
+    \item \textbf{Opponent Modeling:} Instead of evaluating all opponent replies, we assume the opponent is rational and sort their moves, checking only the top candidates (Best-Reply search).
+\end{itemize}
+
+\section{Constraint Satisfaction and Arc Consistency}
+
+A novel addition to the improved agent is the modeling of move generation as a Constraint Satisfaction Problem (CSP).
+
+\subsection{CSP Formulation}
+In Backgammon, a player must use both dice if possible. A greedy choice for the first die might render the second die unplayable.
+\begin{itemize}
+    \item \textbf{Variables ($X$):} The dice rolls available (e.g., $X_1, X_2$ for a non-double roll).
+    \item \textbf{Domains ($D$):} The set of legal atomic moves for each die.
+    \item \textbf{Constraints ($C$):} A move $x \in D(X_i)$ is consistent with $X_j$ if, after applying $x$, there exists at least one valid move for $X_j$.
+\end{itemize}
+
+\subsection{AC-3 Algorithm Implementation}
+The agent employs the AC-3 (Arc Consistency Algorithm \#3) \cite{aima} to prune the domains before full search expansion.
+
+\begin{algorithm}
+\caption{AC-3 for Backgammon Move Pruning}
+\begin{algorithmic}
+\State $Queue \leftarrow \{(X_1, X_2), (X_2, X_1)\}$
+\While{$Queue$ is not empty}
+    \State $(X_i, X_j) \leftarrow Queue.pop()$
+    \If{$Revise(X_i, X_j)$}
+        \If{$Domain(X_i)$ is empty}
+            \State \textbf{return} Failure
+        \EndIf
+        \State Add neighbors of $X_i$ to $Queue$
+    \EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\textbf{Function $Revise(X_i, X_j)$:}
+Removes a move $m$ from $Domain(X_i)$ if applying $m$ leaves the state such that no legal move exists for $X_j$. This ensures that the agent filters out "trap" moves that would forfeit the second die, satisfying the game rule of maximizing dice utilization.
