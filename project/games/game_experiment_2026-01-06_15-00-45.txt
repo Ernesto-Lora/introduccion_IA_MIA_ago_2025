@@ -1,0 +1,185 @@
+Experiment Date: 2026-01-06_15-00-45
+Player 1 (White/Pos): CSP Arc Consistency (AI 1)
+Player 2 (Black/Neg): Expectiminimax V2 (AI 2)
+--------------------------------------------------
+Turn 1: AI 1 (CSP) | Dice: (4, 4, 4, 4)
+    Time: 0.1018s
+    Moves: 11->15, 11->15, 15->19, 15->19
+
+Turn 2: AI 2 (Base) | Dice: (6, 4)
+    Time: 0.3849s
+    Moves: 5->1, 7->1
+
+Turn 3: AI 1 (CSP) | Dice: (1, 5)
+    Time: 0.0934s
+    Moves: 11->16, 18->19
+
+Turn 4: AI 2 (Base) | Dice: (4, 1)
+    Time: 0.3475s
+    Moves: 12->8, 8->7
+
+Turn 5: AI 1 (CSP) | Dice: (3, 6)
+    Time: 0.1039s
+    Moves: 16->22, 19->22
+
+Turn 6: AI 2 (Base) | Dice: (5, 5, 5, 5)
+    Time: 0.2772s
+    Moves: 7->2, 7->2, 12->7, 12->7
+
+Turn 7: AI 1 (CSP) | Dice: (5, 2)
+    Time: 0.1095s
+    Moves: 11->13, 11->16
+
+Turn 8: AI 2 (Base) | Dice: (6, 5)
+    Time: 0.2888s
+    Moves: 12->7, 7->1
+
+Turn 9: AI 1 (CSP) | Dice: (6, 4)
+    Time: 0.0956s
+    Moves: 18->22, 13->19
+
+Turn 10: AI 2 (Base) | Dice: (1, 2)
+    Time: 0.1487s
+    Moves: 5->4, 4->2
+
+Turn 11: AI 1 (CSP) | Dice: (1, 3)
+    Time: 0.0974s
+    Moves: 16->19, 18->19
+
+Turn 12: AI 2 (Base) | Dice: (4, 2)
+    Time: 0.1471s
+    Moves: 5->3, 7->3
+
+Turn 13: AI 1 (CSP) | Dice: (5, 5, 5, 5)
+    Time: 0.0189s
+    Moves: 16->21, 16->21, 16->21
+
+Turn 14: AI 2 (Base) | Dice: (6, 5)
+    Time: 0.0477s
+    Moves: 12->7, 7->1
+
+Turn 15: AI 1 (CSP) | Dice: (4, 3)
+    Time: 0.0673s
+    Moves: 18->21, 18->22
+
+Turn 16: AI 2 (Base) | Dice: (3, 1)
+    Time: 0.0247s
+    Moves: 7->4, 4->3
+
+Turn 17: AI 1 (CSP) | Dice: (4, 2)
+    Time: 0.0424s
+    Moves: 0->4, 4->6
+
+Turn 18: AI 2 (Base) | Dice: (1, 1, 1, 1)
+    Time: 0.0114s
+    Moves: 1->0, 1->0, 2->1, 7->6
+
+Turn 19: AI 1 (CSP) | Dice: (6, 2)
+    Time: 0.0178s
+    Moves: PASS (No legal moves or AI failed)
+
+Turn 20: AI 2 (Base) | Dice: (2, 3)
+    Time: 0.0041s
+    Moves: 3->1, 6->3
+
+Turn 21: AI 1 (CSP) | Dice: (5, 6)
+    Time: 0.0071s
+    Moves: BAR->4
+
+Turn 22: AI 2 (Base) | Dice: (1, 6)
+    Time: 0.0033s
+    Moves: 1->0, 23->17
+
+Turn 23: AI 1 (CSP) | Dice: (1, 3)
+    Time: 0.0150s
+    Moves: PASS (No legal moves or AI failed)
+
+Turn 24: AI 2 (Base) | Dice: (2, 2, 2, 2)
+    Time: 0.0134s
+    Moves: 2->0, 2->0, 3->1, 17->15
+
+Turn 25: AI 1 (CSP) | Dice: (2, 6)
+    Time: 0.0103s
+    Moves: PASS (No legal moves or AI failed)
+
+Turn 26: AI 2 (Base) | Dice: (5, 1)
+    Time: 0.0097s
+    Moves: 23->18, 1->0
+
+Turn 27: AI 1 (CSP) | Dice: (3, 2)
+    Time: 0.0638s
+    Moves: BAR->2, 2->4
+
+Turn 28: AI 2 (Base) | Dice: (6, 1)
+    Time: 0.0560s
+    Moves: 18->12, 1->0
+
+Turn 29: AI 1 (CSP) | Dice: (6, 6, 6, 6)
+    Time: 0.0773s
+    Moves: 4->10, 4->10, 10->16, 10->16
+
+Turn 30: AI 2 (Base) | Dice: (2, 4)
+    Time: 0.0918s
+    Moves: 3->1, 5->1
+
+Turn 31: AI 1 (CSP) | Dice: (5, 5, 5, 5)
+    Time: 0.0678s
+    Moves: 16->21, 16->21, 19->24, 19->24
+
+Turn 32: AI 2 (Base) | Dice: (3, 1)
+    Time: 0.1051s
+    Moves: 3->0, 1->0
+
+Turn 33: AI 1 (CSP) | Dice: (6, 2)
+    Time: 0.0398s
+    Moves: 19->25, 22->24
+
+Turn 34: AI 2 (Base) | Dice: (6, 4)
+    Time: 0.0788s
+    Moves: 5->1, 12->6
+
+Turn 35: AI 1 (CSP) | Dice: (6, 6, 6, 6)
+    Time: 0.0190s
+    Moves: 21->27, 21->27, 21->27, 21->27
+
+Turn 36: AI 2 (Base) | Dice: (3, 3, 3, 3)
+    Time: 0.0650s
+    Moves: 6->3, 3->0, 15->12, 12->9
+
+Turn 37: AI 1 (CSP) | Dice: (4, 2)
+    Time: 0.0119s
+    Moves: 22->24, 21->25
+
+Turn 38: AI 2 (Base) | Dice: (3, 3, 3, 3)
+    Time: 0.0378s
+    Moves: 9->6, 6->3, 1->-2, 1->-2
+
+Turn 39: AI 1 (CSP) | Dice: (6, 4)
+    Time: 0.0269s
+    Moves: 21->25, 19->25
+
+Turn 40: AI 2 (Base) | Dice: (6, 5)
+    Time: 0.0209s
+    Moves: 1->-4, 3->-3
+
+Turn 41: AI 1 (CSP) | Dice: (4, 5)
+    Time: 0.0091s
+    Moves: 22->26, 19->24
+
+Turn 42: AI 2 (Base) | Dice: (5, 1)
+    Time: 0.0025s
+    Moves: 1->-4, 0->-1
+
+Turn 43: AI 1 (CSP) | Dice: (6, 6, 6, 6)
+    Time: 0.0001s
+    Moves: 22->28
+
+
+==============================
+FINAL RESULT: AI 1 (CSP)
+Total Turns: 44
+------------------------------
+PERFORMANCE STATISTICS:
+AI 1 (CSP) -> Avg Time: 0.0498s | Total Time: 1.10s | Moves: 22
+AI 2 (Base) -> Avg Time: 0.1032s | Total Time: 2.17s | Moves: 21
+==============================
